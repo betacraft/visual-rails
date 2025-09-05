@@ -1,0 +1,458 @@
+{
+  "version": "8.0.0",
+  "generated_at": "2024-09-04",
+  "gems": [
+    {
+      "id": "railties",
+      "name": "railties",
+      "description": "Rails core engine - the glue that brings everything together",
+      "type": "core",
+      "loc": 15000,
+      "modules": ["Rails", "Rails::Application", "Rails::Engine", "Rails::Railtie", "Rails::Initializable"],
+      "dependencies": ["activesupport", "actionpack", "thor", "zeitwerk"],
+      "color": "#CC0000"
+    },
+    {
+      "id": "activesupport",
+      "name": "activesupport",
+      "description": "Core extensions and utilities - foundation for all Rails",
+      "type": "foundation",
+      "loc": 28000,
+      "modules": ["ActiveSupport::Concern", "ActiveSupport::Callbacks", "ActiveSupport::Configurable", "ActiveSupport::Dependencies"],
+      "moduleDetails": {
+        "ActiveSupport::Concern": {
+          "description": "Module for creating reusable code concerns",
+          "components": ["included", "class_methods", "append_features", "extended", "prepended"],
+          "loc": 500
+        },
+        "ActiveSupport::Callbacks": {
+          "description": "Callbacks system for hooks around methods",
+          "components": ["define_callbacks", "set_callback", "skip_callback", "run_callbacks", "reset_callbacks"],
+          "loc": 1200
+        },
+        "ActiveSupport::Configurable": {
+          "description": "Configuration DSL for classes",
+          "components": ["config", "configure", "config_accessor", "inherited", "reset"],
+          "loc": 350
+        },
+        "ActiveSupport::Dependencies": {
+          "description": "Autoloading and reloading constants",
+          "components": ["autoload_paths", "require_dependency", "load_missing_constant", "constantize", "safe_constantize"],
+          "loc": 2000
+        }
+      },
+      "dependencies": [],
+      "color": "#4A90E2"
+    },
+    {
+      "id": "activerecord",
+      "name": "activerecord",
+      "description": "Object-Relational Mapping framework",
+      "type": "model",
+      "loc": 45000,
+      "modules": ["ActiveRecord::Base", "ActiveRecord::Migration", "ActiveRecord::Associations", "ActiveRecord::Validations", "ActiveRecord::Callbacks"],
+      "moduleDetails": {
+        "ActiveRecord::Base": {
+          "description": "Primary ORM class for database interaction",
+          "components": ["find", "where", "create", "update", "destroy", "save", "connection"],
+          "loc": 8000
+        },
+        "ActiveRecord::Migration": {
+          "description": "Database schema evolution",
+          "components": ["create_table", "add_column", "remove_column", "add_index", "change_column", "reversible"],
+          "loc": 3500
+        },
+        "ActiveRecord::Associations": {
+          "description": "Relationship definitions between models",
+          "components": ["belongs_to", "has_many", "has_one", "has_and_belongs_to_many", "through", "polymorphic"],
+          "loc": 5000
+        },
+        "ActiveRecord::Validations": {
+          "description": "Data validation rules",
+          "components": ["validates", "validates_presence_of", "validates_uniqueness_of", "validates_format_of", "custom_validators"],
+          "loc": 2000
+        },
+        "ActiveRecord::Callbacks": {
+          "description": "Lifecycle hooks for models",
+          "components": ["before_save", "after_save", "before_create", "after_create", "before_destroy", "after_destroy"],
+          "loc": 1500
+        }
+      },
+      "dependencies": ["activesupport", "activemodel"],
+      "color": "#2E7D32"
+    },
+    {
+      "id": "actionpack",
+      "name": "actionpack",
+      "description": "Web request handling, routing, and controllers",
+      "type": "controller",
+      "loc": 23000,
+      "modules": ["ActionController::Base", "ActionDispatch::Routing", "ActionController::Metal", "ActionDispatch::Request"],
+      "dependencies": ["activesupport", "actionview"],
+      "color": "#1976D2"
+    },
+    {
+      "id": "actionview",
+      "name": "actionview",
+      "description": "View templates and rendering",
+      "type": "view",
+      "loc": 18000,
+      "modules": ["ActionView::Base", "ActionView::Template", "ActionView::Helpers", "ActionView::Renderer"],
+      "dependencies": ["activesupport"],
+      "color": "#7B1FA2"
+    },
+    {
+      "id": "activemodel",
+      "name": "activemodel",
+      "description": "Model interfaces and validations",
+      "type": "model",
+      "loc": 8000,
+      "modules": ["ActiveModel::Model", "ActiveModel::Validations", "ActiveModel::Serialization", "ActiveModel::AttributeMethods"],
+      "dependencies": ["activesupport"],
+      "color": "#00796B"
+    },
+    {
+      "id": "activejob",
+      "name": "activejob",
+      "description": "Background job processing framework",
+      "type": "jobs",
+      "loc": 5000,
+      "modules": ["ActiveJob::Base", "ActiveJob::QueueAdapters", "ActiveJob::Enqueuing", "ActiveJob::Execution"],
+      "dependencies": ["activesupport"],
+      "color": "#FF6F00"
+    },
+    {
+      "id": "actionmailer",
+      "name": "actionmailer",
+      "description": "Email composition and delivery",
+      "type": "mailer",
+      "loc": 7000,
+      "modules": ["ActionMailer::Base", "ActionMailer::MessageDelivery", "ActionMailer::Preview"],
+      "dependencies": ["activesupport", "actionpack", "actionview", "mail"],
+      "color": "#D32F2F"
+    },
+    {
+      "id": "actioncable",
+      "name": "actioncable",
+      "description": "WebSocket framework for real-time features",
+      "type": "websocket",
+      "loc": 8000,
+      "modules": ["ActionCable::Connection", "ActionCable::Channel", "ActionCable::Server"],
+      "dependencies": ["activesupport", "actionpack", "nio4r", "websocket-driver"],
+      "color": "#512DA8"
+    },
+    {
+      "id": "activestorage",
+      "name": "activestorage",
+      "description": "File upload and cloud storage management",
+      "type": "storage",
+      "loc": 10000,
+      "modules": ["ActiveStorage::Blob", "ActiveStorage::Attachment", "ActiveStorage::Service"],
+      "dependencies": ["activesupport", "activerecord", "actionpack", "activejob"],
+      "color": "#0288D1"
+    },
+    {
+      "id": "actiontext",
+      "name": "actiontext",
+      "description": "Rich text content and editing",
+      "type": "text",
+      "loc": 4000,
+      "modules": ["ActionText::RichText", "ActionText::Content", "ActionText::Attachable"],
+      "dependencies": ["activesupport", "activerecord", "activestorage", "actionpack"],
+      "color": "#689F38"
+    },
+    {
+      "id": "actionmailbox",
+      "name": "actionmailbox",
+      "description": "Inbound email routing and processing",
+      "type": "mailbox",
+      "loc": 3500,
+      "modules": ["ActionMailbox::Base", "ActionMailbox::InboundEmail", "ActionMailbox::Router"],
+      "dependencies": ["activesupport", "activerecord", "activestorage", "actionpack", "mail"],
+      "color": "#F57C00"
+    },
+    {
+      "id": "rails",
+      "name": "rails",
+      "description": "The full Rails framework - umbrella gem",
+      "type": "umbrella",
+      "loc": 500,
+      "modules": [],
+      "dependencies": ["railties", "activerecord", "actionpack", "actionview", "actionmailer", "activejob", "actioncable", "activestorage", "actiontext", "actionmailbox"],
+      "color": "#CC0000"
+    }
+  ],
+  "requestFlow": {
+    "title": "Rails Request Flow",
+    "description": "How an HTTP request flows through Rails",
+    "steps": [
+      {
+        "id": "browser",
+        "name": "Browser",
+        "description": "User makes HTTP request",
+        "type": "client",
+        "details": "GET /posts/123"
+      },
+      {
+        "id": "webserver",
+        "name": "Web Server",
+        "description": "Rack-compatible server (Puma/Unicorn)",
+        "type": "server",
+        "details": "Receives HTTP request, passes to Rack"
+      },
+      {
+        "id": "rack",
+        "name": "Rack Interface",
+        "description": "Standard Ruby web server interface",
+        "type": "middleware",
+        "details": "Converts HTTP to Ruby env hash"
+      },
+      {
+        "id": "middleware",
+        "name": "Middleware Stack",
+        "description": "Chain of middleware processors",
+        "type": "middleware",
+        "components": ["Session", "Cookies", "Flash", "ParamsParser", "Head", "ConditionalGet", "ETag"]
+      },
+      {
+        "id": "router",
+        "name": "Router",
+        "description": "ActionDispatch::Routing",
+        "type": "routing",
+        "details": "Matches URL to controller#action"
+      },
+      {
+        "id": "controller",
+        "name": "Controller",
+        "description": "ActionController::Base",
+        "type": "controller",
+        "details": "PostsController#show"
+      },
+      {
+        "id": "model",
+        "name": "Model",
+        "description": "ActiveRecord::Base",
+        "type": "model",
+        "details": "Post.find(params[:id])"
+      },
+      {
+        "id": "view",
+        "name": "View",
+        "description": "ActionView::Base",
+        "type": "view",
+        "details": "Renders posts/show.html.erb"
+      },
+      {
+        "id": "response",
+        "name": "Response",
+        "description": "HTTP Response",
+        "type": "response",
+        "details": "HTML/JSON/XML sent back"
+      }
+    ],
+    "connections": [
+      {"from": "browser", "to": "webserver"},
+      {"from": "webserver", "to": "rack"},
+      {"from": "rack", "to": "middleware"},
+      {"from": "middleware", "to": "router"},
+      {"from": "router", "to": "controller"},
+      {"from": "controller", "to": "model"},
+      {"from": "model", "to": "controller", "bidirectional": true},
+      {"from": "controller", "to": "view"},
+      {"from": "view", "to": "response"},
+      {"from": "response", "to": "browser"}
+    ]
+  },
+  "activeRecordFlow": {
+    "title": "ActiveRecord Query Flow",
+    "description": "How database queries work in Rails",
+    "steps": [
+      {
+        "id": "model",
+        "name": "Model Layer",
+        "description": "Your Rails model",
+        "type": "model",
+        "details": "User.where(active: true)"
+      },
+      {
+        "id": "arel",
+        "name": "Arel",
+        "description": "SQL AST manager",
+        "type": "query",
+        "details": "Builds abstract syntax tree"
+      },
+      {
+        "id": "connection",
+        "name": "Connection Adapter",
+        "description": "Database-specific adapter",
+        "type": "adapter",
+        "details": "PostgreSQL/MySQL/SQLite adapter"
+      },
+      {
+        "id": "connection_pool",
+        "name": "Connection Pool",
+        "description": "Manages database connections",
+        "type": "pool",
+        "details": "Thread-safe connection management"
+      },
+      {
+        "id": "database",
+        "name": "Database",
+        "description": "Actual database server",
+        "type": "database",
+        "details": "PostgreSQL/MySQL/SQLite"
+      },
+      {
+        "id": "result",
+        "name": "Result Set",
+        "description": "Raw database results",
+        "type": "result",
+        "details": "Rows returned from query"
+      },
+      {
+        "id": "instantiation",
+        "name": "Instantiation",
+        "description": "Convert to AR objects",
+        "type": "model",
+        "details": "Creates User instances"
+      }
+    ],
+    "connections": [
+      {"from": "model", "to": "arel"},
+      {"from": "arel", "to": "connection"},
+      {"from": "connection", "to": "connection_pool"},
+      {"from": "connection_pool", "to": "database"},
+      {"from": "database", "to": "result"},
+      {"from": "result", "to": "instantiation"},
+      {"from": "instantiation", "to": "model"}
+    ]
+  },
+  "bootProcess": {
+    "title": "Rails Boot Process",
+    "description": "How Rails initializes and starts up",
+    "steps": [
+      {
+        "id": "bin_rails",
+        "name": "bin/rails",
+        "description": "Entry point script",
+        "type": "script",
+        "details": "Loads boot.rb"
+      },
+      {
+        "id": "boot",
+        "name": "config/boot.rb",
+        "description": "Sets up Bundler",
+        "type": "config",
+        "details": "Bundler.setup"
+      },
+      {
+        "id": "application",
+        "name": "config/application.rb",
+        "description": "Loads Rails gems",
+        "type": "config",
+        "details": "require 'rails/all'"
+      },
+      {
+        "id": "railties",
+        "name": "Railties",
+        "description": "Rails core initialization",
+        "type": "core",
+        "details": "Loads all framework components"
+      },
+      {
+        "id": "initializers",
+        "name": "Initializers",
+        "description": "config/initializers/*",
+        "type": "config",
+        "details": "App-specific configuration"
+      },
+      {
+        "id": "middleware",
+        "name": "Middleware Stack",
+        "description": "Builds middleware chain",
+        "type": "middleware",
+        "details": "Sets up request pipeline"
+      },
+      {
+        "id": "routes",
+        "name": "Routes",
+        "description": "config/routes.rb",
+        "type": "routing",
+        "details": "Defines URL mappings"
+      },
+      {
+        "id": "eager_load",
+        "name": "Eager Load",
+        "description": "Load all app code",
+        "type": "loading",
+        "details": "In production mode"
+      },
+      {
+        "id": "ready",
+        "name": "App Ready",
+        "description": "Rails application ready",
+        "type": "ready",
+        "details": "Server starts listening"
+      }
+    ],
+    "connections": [
+      {"from": "bin_rails", "to": "boot"},
+      {"from": "boot", "to": "application"},
+      {"from": "application", "to": "railties"},
+      {"from": "railties", "to": "initializers"},
+      {"from": "initializers", "to": "middleware"},
+      {"from": "middleware", "to": "routes"},
+      {"from": "routes", "to": "eager_load"},
+      {"from": "eager_load", "to": "ready"}
+    ]
+  },
+  "dependencies": [
+    {"source": "rails", "target": "railties", "strength": 10},
+    {"source": "rails", "target": "activerecord", "strength": 10},
+    {"source": "rails", "target": "actionpack", "strength": 10},
+    {"source": "rails", "target": "actionview", "strength": 8},
+    {"source": "rails", "target": "actionmailer", "strength": 6},
+    {"source": "rails", "target": "activejob", "strength": 6},
+    {"source": "rails", "target": "actioncable", "strength": 5},
+    {"source": "rails", "target": "activestorage", "strength": 5},
+    {"source": "rails", "target": "actiontext", "strength": 4},
+    {"source": "rails", "target": "actionmailbox", "strength": 4},
+    
+    {"source": "railties", "target": "activesupport", "strength": 10},
+    {"source": "railties", "target": "actionpack", "strength": 8},
+    
+    {"source": "activerecord", "target": "activesupport", "strength": 10},
+    {"source": "activerecord", "target": "activemodel", "strength": 8},
+    
+    {"source": "actionpack", "target": "activesupport", "strength": 10},
+    {"source": "actionpack", "target": "actionview", "strength": 8},
+    
+    {"source": "actionview", "target": "activesupport", "strength": 10},
+    
+    {"source": "activemodel", "target": "activesupport", "strength": 10},
+    
+    {"source": "activejob", "target": "activesupport", "strength": 10},
+    
+    {"source": "actionmailer", "target": "activesupport", "strength": 10},
+    {"source": "actionmailer", "target": "actionpack", "strength": 7},
+    {"source": "actionmailer", "target": "actionview", "strength": 7},
+    
+    {"source": "actioncable", "target": "activesupport", "strength": 10},
+    {"source": "actioncable", "target": "actionpack", "strength": 6},
+    
+    {"source": "activestorage", "target": "activesupport", "strength": 10},
+    {"source": "activestorage", "target": "activerecord", "strength": 8},
+    {"source": "activestorage", "target": "actionpack", "strength": 6},
+    {"source": "activestorage", "target": "activejob", "strength": 5},
+    
+    {"source": "actiontext", "target": "activesupport", "strength": 10},
+    {"source": "actiontext", "target": "activerecord", "strength": 8},
+    {"source": "actiontext", "target": "activestorage", "strength": 7},
+    {"source": "actiontext", "target": "actionpack", "strength": 6},
+    
+    {"source": "actionmailbox", "target": "activesupport", "strength": 10},
+    {"source": "actionmailbox", "target": "activerecord", "strength": 8},
+    {"source": "actionmailbox", "target": "activestorage", "strength": 7},
+    {"source": "actionmailbox", "target": "actionpack", "strength": 6}
+  ]
+}

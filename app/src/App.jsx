@@ -1,0 +1,304 @@
+import React, { useState, useEffect } from 'react';
+import GraphView from './components/GraphView';
+import InfoPanel from './components/InfoPanel';
+import Breadcrumb from './components/Breadcrumb';
+import SearchBar from './components/SearchBar';
+import railsData from '../data/rails_structure.json';
+import './App.css';
+
+function App() {
+  const [currentView, setCurrentView] = useState('overview');
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [navigationPath, setNavigationPath] = useState(['Rails 8.0']);
+  const [focusedGem, setFocusedGem] = useState(null);
+  const [focusedModule, setFocusedModule] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [presentationMode, setPresentationMode] = useState(false);
+  const [hideActiveSupport, setHideActiveSupport] = useState(false);
+  const [layoutType, setLayoutType] = useState('force');
+  const [showMetrics, setShowMetrics] = useState(true);
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Handle ESC key separately - go back one level
+      if (e.key === 'Escape') {
+        handleBackNavigation();
+        return;
+      }
+      
+      switch(e.key) {
+        case '1':
+          showOverview();
+          break;
+        case '2':
+          showActiveRecord();
+          break;
+        case '3':
+          showActionPack();
+          break;
+        case '4':
+          showRailties();
+          break;
+        case 'f':
+        case 'F':
+          toggleFullscreen();
+          break;
+        case 'p':
+        case 'P':
+          setPresentationMode(!presentationMode);
+          break;
+      }
+    };
+
+    // Use keydown instead of keypress to capture ESC
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [presentationMode, focusedModule, focusedGem, currentView]);
+
+  const handleBackNavigation = () => {
+    if (currentView === 'request-flow' || currentView === 'activerecord-flow' || currentView === 'boot-process') {
+      // Go back from flow views to overview
+      showOverview();
+    } else if (focusedModule) {
+      // Go back from module view to gem view
+      setFocusedModule(null);
+      setSelectedNode(null);
+      setNavigationPath(['Rails 8.0', focusedGem.name]);
+    } else if (focusedGem) {
+      // Go back from gem view to overview
+      setFocusedGem(null);
+      setFocusedModule(null);
+      setSelectedNode(null);
+      setNavigationPath(['Rails 8.0']);
+    } else {
+      // Already at overview, do nothing or could show a message
+      setSelectedNode(null);
+    }
+  };
+
+  const showOverview = () => {
+    setCurrentView('overview');
+    setSelectedNode(null);
+    setFocusedGem(null);
+    setFocusedModule(null);
+    setNavigationPath(['Rails 8.0']);
+  };
+
+  const showActiveRecord = () => {
+    setCurrentView('activerecord-flow');
+    setSelectedNode(null);
+    setFocusedGem(null);
+    setFocusedModule(null);
+    setNavigationPath(['Rails 8.0', 'ActiveRecord Flow']);
+  };
+
+  const showActionPack = () => {
+    setCurrentView('request-flow');
+    setSelectedNode(null);
+    setFocusedGem(null);
+    setFocusedModule(null);
+    setNavigationPath(['Rails 8.0', 'Request Flow']);
+  };
+
+  const showRailties = () => {
+    setCurrentView('boot-process');
+    setSelectedNode(null);
+    setFocusedGem(null);
+    setFocusedModule(null);
+    setNavigationPath(['Rails 8.0', 'Boot Process']);
+  };
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  const handleNodeClick = (node) => {
+    if (!node) {
+      setSelectedNode(null);
+      return;
+    }
+    
+    // Check if we're in module view (viewing components)
+    if (focusedModule) {
+      // In component view, just select the component
+      setSelectedNode(node);
+      return;
+    }
+    
+    // Check if we're in gem view (viewing modules)
+    if (focusedGem) {
+      // Clicking on a module
+      if (node.type === 'module') {
+        if (selectedNode && selectedNode.id === node.id) {
+          // Second click - drill down into the module
+          const moduleDetails = focusedGem.moduleDetails && focusedGem.moduleDetails[node.name];
+          if (moduleDetails) {
+            setFocusedModule({
+              ...node,
+              details: moduleDetails,
+              parentGem: focusedGem
+            });
+            setNavigationPath(['Rails 8.0', focusedGem.name, node.name]);
+            setSelectedNode(null);
+          }
+        } else {
+          // First click - select the module
+          setSelectedNode(node);
+        }
+      }
+      return;
+    }
+    
+    // In overview - clicking on gems
+    setSelectedNode(node);
+    
+    // Double-click or second click on same node to drill down
+    if (selectedNode && selectedNode.id === node.id) {
+      // Drill down into the gem
+      setFocusedGem(node);
+      setNavigationPath(['Rails 8.0', node.name]);
+      setSelectedNode(null);
+    } else {
+      // Just select the node
+      const newPath = [...navigationPath];
+      if (navigationPath.length === 1) {
+        newPath.push(node.name);
+      } else {
+        newPath[navigationPath.length - 1] = node.name;
+      }
+      setNavigationPath(newPath);
+    }
+  };
+
+  const handleNavigate = (index) => {
+    if (index === 0) {
+      showOverview();
+    } else if (index === 1 && focusedGem) {
+      // Go back to gem view from module view
+      setFocusedModule(null);
+      setSelectedNode(null);
+      setNavigationPath(['Rails 8.0', focusedGem.name]);
+    } else if (index === 2 && focusedModule) {
+      // Stay in module view
+      setNavigationPath(navigationPath.slice(0, index + 1));
+    } else {
+      setNavigationPath(navigationPath.slice(0, index + 1));
+    }
+  };
+
+  return (
+    <div className={`app ${presentationMode ? 'presentation-mode' : ''}`}>
+      {!presentationMode && (
+        <>
+          <header className="app-header">
+            <div className="header-content">
+              <h1>Rails 8.0 Visual Explorer</h1>
+              <SearchBar 
+                value={searchTerm} 
+                onChange={setSearchTerm}
+                onSelect={handleNodeClick}
+                data={railsData}
+              />
+            </div>
+            <Breadcrumb 
+              path={navigationPath} 
+              onNavigate={handleNavigate}
+              onBack={handleBackNavigation}
+            />
+          </header>
+          
+          <div className="controls-bar">
+            <div className="control-group">
+              <label className="control-label">Layout:</label>
+              <div className="layout-buttons">
+                <button 
+                  className={`layout-btn ${layoutType === 'force' ? 'active' : ''}`}
+                  onClick={() => setLayoutType('force')}
+                  title="Free-form force-directed layout"
+                >
+                  Force
+                </button>
+                <button 
+                  className={`layout-btn ${layoutType === 'hierarchical' ? 'active' : ''}`}
+                  onClick={() => setLayoutType('hierarchical')}
+                  title="Top-down dependency hierarchy"
+                >
+                  Hierarchical
+                </button>
+                <button 
+                  className={`layout-btn ${layoutType === 'circular' ? 'active' : ''}`}
+                  onClick={() => setLayoutType('circular')}
+                  title="Circular arrangement"
+                >
+                  Circular
+                </button>
+              </div>
+            </div>
+            
+            <div className="control-group">
+              <button 
+                className={`toggle-button ${hideActiveSupport ? 'active' : ''}`}
+                onClick={() => setHideActiveSupport(!hideActiveSupport)}
+                title="Hide ActiveSupport connections to simplify the view"
+              >
+                {hideActiveSupport ? '👁️' : '🚫'} ActiveSupport
+              </button>
+            </div>
+            
+            <div className="control-group">
+              <button 
+                className={`toggle-button ${showMetrics ? 'active' : ''}`}
+                onClick={() => setShowMetrics(!showMetrics)}
+                title="Toggle lines of code display"
+              >
+                📊 Metrics
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+      
+      <main className="app-main">
+        <GraphView 
+          data={railsData}
+          currentView={currentView}
+          onNodeClick={handleNodeClick}
+          selectedNode={selectedNode}
+          searchTerm={searchTerm}
+          hideActiveSupport={hideActiveSupport}
+          layoutType={layoutType}
+          showMetrics={showMetrics}
+          focusedGem={focusedGem}
+          focusedModule={focusedModule}
+        />
+        
+        {!presentationMode && selectedNode && (
+          <InfoPanel 
+            node={selectedNode}
+            data={railsData}
+          />
+        )}
+      </main>
+
+      {!presentationMode && (
+        <footer className="app-footer">
+          <div className="keyboard-hints">
+            <span>Click to select</span>
+            <span>Click again to drill down</span>
+            <span>|</span>
+            <span>1-4: Views</span>
+            <span>F: Fullscreen</span>
+            <span>P: Presentation</span>
+            <span>ESC: Overview</span>
+          </div>
+        </footer>
+      )}
+    </div>
+  );
+}
+
+export default App
