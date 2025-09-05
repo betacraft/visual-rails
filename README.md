@@ -4,7 +4,7 @@ An interactive visualization tool for exploring the Ruby on Rails 8.0 framework 
 
 ## 🚀 Live Demo
 
-Visit [Rails Visual Explorer](https://your-username.github.io/rails-visuals/) (Update with your GitHub Pages URL)
+Visit [Rails Visual Explorer](https://betacraft.github.io/visual-rails/)
 
 ## 🎯 Purpose
 
@@ -63,10 +63,10 @@ This tool helps developers:
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the repository (private repo - requires access):
 ```bash
-git clone https://github.com/your-username/rails-visuals.git
-cd rails-visuals/app
+git clone git@github.com:betacraft/visual-rails.git
+cd visual-rails/app
 ```
 
 2. Install dependencies:
@@ -89,22 +89,24 @@ npm run build
 
 ### Deployment to GitHub Pages
 
-1. Install gh-pages:
-```bash
-npm install --save-dev gh-pages
-```
+The repository is configured with GitHub Actions for automatic deployment. 
 
-2. Update `vite.config.js` with your repo name:
-```javascript
-export default {
-  base: '/rails-visuals/'
-}
-```
+#### Automatic Deployment (Recommended)
+Every push to the `main` branch automatically triggers deployment to GitHub Pages.
 
-3. Deploy:
+#### Manual Deployment
+If you need to deploy manually:
 ```bash
+cd app
+npm run build
 npm run deploy
 ```
+
+#### GitHub Repository Settings
+Ensure the following settings in your GitHub repository:
+1. Go to Settings → Pages
+2. Source: Deploy from GitHub Actions
+3. The site will be available at: https://betacraft.github.io/visual-rails/
 
 ## 📊 Data Structure
 
