@@ -71,7 +71,7 @@
   font-weight: 500;
 }
 
-.layout-buttons {
+.layout-buttons, .style-buttons {
   display: flex;
   gap: 0.25rem;
   background: white;
@@ -80,7 +80,7 @@
   border: 1px solid #ddd;
 }
 
-.layout-btn {
+.layout-btn, .style-btn {
   padding: 0.4rem 0.8rem;
   border: none;
   background: transparent;
@@ -92,12 +92,12 @@
   font-weight: 500;
 }
 
-.layout-btn:hover {
+.layout-btn:hover, .style-btn:hover {
   background: #f0f0f0;
   color: #333;
 }
 
-.layout-btn.active {
+.layout-btn.active, .style-btn.active {
   background: #CC0000;
   color: white;
 }

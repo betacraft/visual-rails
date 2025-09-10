@@ -1,0 +1,179 @@
+.mermaid-view {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f5f5f5;
+  position: relative;
+  user-select: none;
+}
+
+.mermaid-container {
+  transform-origin: center center;
+  cursor: grab;
+  transition: none;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  position: relative;
+}
+
+.mermaid-container.dragging {
+  cursor: grabbing;
+}
+
+.mermaid-container .mermaid {
+  display: inline-block;
+  width: max-content;
+  max-width: none;
+  margin: auto;
+}
+
+.mermaid-container svg {
+  display: block;
+  width: auto !important;
+  height: auto !important;
+  max-width: none !important;
+  font-size: 16px;
+}
+
+.mermaid-view .loading {
+  color: #666;
+  font-size: 18px;
+  font-style: italic;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  gap: 8px;
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.zoom-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.zoom-btn:hover {
+  background: #f0f0f0;
+  border-color: #999;
+  transform: scale(1.05);
+}
+
+.zoom-btn:active {
+  transform: scale(0.95);
+}
+
+.zoom-level {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  min-width: 50px;
+}
+
+.mermaid-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 99;
+}
+
+.mermaid-view .node {
+  transition: all 0.3s ease;
+}
+
+.mermaid-view .node:hover {
+  filter: brightness(1.1) drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.mermaid-view .node.selected {
+  filter: drop-shadow(0 0 8px #FFD54F);
+}
+
+.mermaid-view .node.highlighted {
+  filter: drop-shadow(0 0 8px #FFEB3B);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px #FFEB3B);
+  }
+  50% {
+    filter: drop-shadow(0 0 16px #FFD54F);
+  }
+}
+
+.mermaid-view .edgePath path {
+  stroke-width: 2px;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.mermaid-view .edgePath:hover path {
+  opacity: 1;
+  stroke-width: 3px;
+}
+
+/* Mermaid diagram specific overrides */
+.mermaid-view .nodeLabel {
+  font-size: 14px !important;
+}
+
+.mermaid-view .cluster rect {
+  fill-opacity: 0.1 !important;
+  stroke-width: 2px !important;
+}
+
+.mermaid-view .cluster text {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mermaid-controls {
+    bottom: 10px;
+    right: 10px;
+    padding: 6px;
+    gap: 6px;
+  }
+  
+  .zoom-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .mermaid-hint {
+    display: none;
+  }
+}

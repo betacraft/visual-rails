@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import GraphView from './components/GraphView';
+import MermaidView from './components/MermaidView';
 import InfoPanel from './components/InfoPanel';
 import Breadcrumb from './components/Breadcrumb';
 import SearchBar from './components/SearchBar';
@@ -15,8 +16,10 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [presentationMode, setPresentationMode] = useState(false);
   const [hideActiveSupport, setHideActiveSupport] = useState(false);
-  const [layoutType, setLayoutType] = useState('force');
+  const [d3LayoutType, setD3LayoutType] = useState('force');
+  const [mermaidViewType, setMermaidViewType] = useState('dependency');
   const [showMetrics, setShowMetrics] = useState(true);
+  const [graphStyle, setGraphStyle] = useState('d3');
 
   useEffect(() => {
     const handleKeyPress = (e) => {
@@ -213,31 +216,53 @@ function App() {
           
           <div className="controls-bar">
             <div className="control-group">
-              <label className="control-label">Layout:</label>
-              <div className="layout-buttons">
+              <label className="control-label">Style:</label>
+              <div className="style-buttons">
                 <button 
-                  className={`layout-btn ${layoutType === 'force' ? 'active' : ''}`}
-                  onClick={() => setLayoutType('force')}
-                  title="Free-form force-directed layout"
+                  className={`style-btn ${graphStyle === 'd3' ? 'active' : ''}`}
+                  onClick={() => setGraphStyle('d3')}
+                  title="Interactive D3.js visualization"
                 >
-                  Force
+                  D3.js
                 </button>
                 <button 
-                  className={`layout-btn ${layoutType === 'hierarchical' ? 'active' : ''}`}
-                  onClick={() => setLayoutType('hierarchical')}
-                  title="Top-down dependency hierarchy"
+                  className={`style-btn ${graphStyle === 'mermaid' ? 'active' : ''}`}
+                  onClick={() => setGraphStyle('mermaid')}
+                  title="Mermaid diagram visualization"
                 >
-                  Hierarchical
-                </button>
-                <button 
-                  className={`layout-btn ${layoutType === 'circular' ? 'active' : ''}`}
-                  onClick={() => setLayoutType('circular')}
-                  title="Circular arrangement"
-                >
-                  Circular
+                  Mermaid
                 </button>
               </div>
             </div>
+            
+            {graphStyle === 'd3' && (
+              <div className="control-group">
+                <label className="control-label">Layout:</label>
+                <div className="layout-buttons">
+                  <button 
+                    className={`layout-btn ${d3LayoutType === 'force' ? 'active' : ''}`}
+                    onClick={() => setD3LayoutType('force')}
+                    title="Free-form force-directed layout"
+                  >
+                    Force
+                  </button>
+                  <button 
+                    className={`layout-btn ${d3LayoutType === 'hierarchical' ? 'active' : ''}`}
+                    onClick={() => setD3LayoutType('hierarchical')}
+                    title="Top-down dependency hierarchy"
+                  >
+                    Hierarchical
+                  </button>
+                  <button 
+                    className={`layout-btn ${d3LayoutType === 'circular' ? 'active' : ''}`}
+                    onClick={() => setD3LayoutType('circular')}
+                    title="Circular arrangement"
+                  >
+                    Circular
+                  </button>
+                </div>
+              </div>
+            )}
             
             <div className="control-group">
               <button 
@@ -263,18 +288,33 @@ function App() {
       )}
       
       <main className="app-main">
-        <GraphView 
-          data={railsData}
-          currentView={currentView}
-          onNodeClick={handleNodeClick}
-          selectedNode={selectedNode}
-          searchTerm={searchTerm}
-          hideActiveSupport={hideActiveSupport}
-          layoutType={layoutType}
-          showMetrics={showMetrics}
-          focusedGem={focusedGem}
-          focusedModule={focusedModule}
-        />
+        {graphStyle === 'd3' ? (
+          <GraphView 
+            data={railsData}
+            currentView={currentView}
+            onNodeClick={handleNodeClick}
+            selectedNode={selectedNode}
+            searchTerm={searchTerm}
+            hideActiveSupport={hideActiveSupport}
+            layoutType={d3LayoutType}
+            showMetrics={showMetrics}
+            focusedGem={focusedGem}
+            focusedModule={focusedModule}
+          />
+        ) : (
+          <MermaidView 
+            data={railsData}
+            currentView={currentView}
+            onNodeClick={handleNodeClick}
+            selectedNode={selectedNode}
+            searchTerm={searchTerm}
+            hideActiveSupport={hideActiveSupport}
+            viewType={mermaidViewType}
+            showMetrics={showMetrics}
+            focusedGem={focusedGem}
+            focusedModule={focusedModule}
+          />
+        )}
         
         {!presentationMode && selectedNode && (
           <InfoPanel 
