@@ -47,3 +47,7 @@ app/.env.production.local
 *.swp
 *.swo
 *~
+
+# Script temporary files
+scripts/tmp/
+scripts/Gemfile.lock

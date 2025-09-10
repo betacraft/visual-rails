@@ -1,0 +1,19 @@
+source 'https://rubygems.org'
+
+# Ruby version (should match Rails 8.0 requirements)
+ruby '>= 3.1.0'
+
+# For parsing Ruby code (optional, for more advanced analysis)
+gem 'parser', '~> 3.2'
+
+# For colored output in terminal
+gem 'colorize', '~> 1.1'
+
+# For progress bars
+gem 'ruby-progressbar', '~> 1.13'
+
+# For JSON generation
+gem 'json', '~> 2.6'
+
+# For parallel processing (speed up analysis)
+gem 'parallel', '~> 1.23'
