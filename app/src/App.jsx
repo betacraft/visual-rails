@@ -3,6 +3,7 @@ import GraphView from './components/GraphView';
 import MermaidView from './components/MermaidView';
 import InfoPanel from './components/InfoPanel';
 import Breadcrumb from './components/Breadcrumb';
+import Sidebar from './components/Sidebar';
 import railsData from '../data/rails_structure.json';
 import './App.css';
 
@@ -18,6 +19,7 @@ function App() {
   const [mermaidViewType, setMermaidViewType] = useState('dependency');
   const [showMetrics, setShowMetrics] = useState(true);
   const [graphStyle, setGraphStyle] = useState('d3');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     const handleKeyPress = (e) => {
@@ -28,18 +30,6 @@ function App() {
       }
       
       switch(e.key) {
-        case '1':
-          showOverview();
-          break;
-        case '2':
-          showActiveRecord();
-          break;
-        case '3':
-          showActionPack();
-          break;
-        case '4':
-          showRailties();
-          break;
         case 'f':
         case 'F':
           toggleFullscreen();
@@ -55,6 +45,23 @@ function App() {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [presentationMode, focusedModule, focusedGem, currentView]);
+
+  const handleSidebarNavigate = (view) => {
+    switch(view) {
+      case 'overview':
+        showOverview();
+        break;
+      case 'activerecord-flow':
+        showActiveRecord();
+        break;
+      case 'request-flow':
+        showActionPack();
+        break;
+      case 'boot-process':
+        showRailties();
+        break;
+    }
+  };
 
   const handleBackNavigation = () => {
     if (currentView === 'request-flow' || currentView === 'activerecord-flow' || currentView === 'boot-process') {
@@ -192,7 +199,15 @@ function App() {
   };
 
   return (
-    <div className={`app ${presentationMode ? 'presentation-mode' : ''}`}>
+    <div className={`app ${presentationMode ? 'presentation-mode' : ''} ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+      {!presentationMode && (
+        <Sidebar 
+          currentView={currentView}
+          onNavigate={handleSidebarNavigate}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        />
+      )}
       {!presentationMode && (
         <>
           <header className="app-header">
@@ -324,10 +339,9 @@ function App() {
             <span>Click to select</span>
             <span>Click again to drill down</span>
             <span>|</span>
-            <span>1-4: Views</span>
             <span>F: Fullscreen</span>
             <span>P: Presentation</span>
-            <span>ESC: Overview</span>
+            <span>ESC: Back</span>
           </div>
         </footer>
       )}
