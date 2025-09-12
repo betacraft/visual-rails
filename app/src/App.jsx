@@ -10,7 +10,7 @@ import './App.css';
 function App() {
   const [currentView, setCurrentView] = useState('overview');
   const [selectedNode, setSelectedNode] = useState(null);
-  const [navigationPath, setNavigationPath] = useState(['Rails 8.0']);
+  const [navigationPath, setNavigationPath] = useState(['Visual Rails']);
   const [focusedGem, setFocusedGem] = useState(null);
   const [focusedModule, setFocusedModule] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -66,13 +66,13 @@ function App() {
       // Go back from module view to gem view
       setFocusedModule(null);
       setSelectedNode(null);
-      setNavigationPath(['Rails 8.0', focusedGem.name]);
+      setNavigationPath(['Visual Rails', focusedGem.name]);
     } else if (focusedGem) {
       // Go back from gem view to overview
       setFocusedGem(null);
       setFocusedModule(null);
       setSelectedNode(null);
-      setNavigationPath(['Rails 8.0']);
+      setNavigationPath(['Visual Rails']);
     } else {
       // Already at overview, do nothing or could show a message
       setSelectedNode(null);
@@ -84,7 +84,7 @@ function App() {
     setSelectedNode(null);
     setFocusedGem(null);
     setFocusedModule(null);
-    setNavigationPath(['Rails 8.0']);
+    setNavigationPath(['Visual Rails']);
   };
 
   const showActiveRecord = () => {
@@ -92,7 +92,7 @@ function App() {
     setSelectedNode(null);
     setFocusedGem(null);
     setFocusedModule(null);
-    setNavigationPath(['Rails 8.0', 'ActiveRecord Flow']);
+    setNavigationPath(['Visual Rails', 'ActiveRecord Flow']);
   };
 
   const showActionPack = () => {
@@ -100,7 +100,7 @@ function App() {
     setSelectedNode(null);
     setFocusedGem(null);
     setFocusedModule(null);
-    setNavigationPath(['Rails 8.0', 'Request Flow']);
+    setNavigationPath(['Visual Rails', 'Request Flow']);
   };
 
   const showRailties = () => {
@@ -108,7 +108,7 @@ function App() {
     setSelectedNode(null);
     setFocusedGem(null);
     setFocusedModule(null);
-    setNavigationPath(['Rails 8.0', 'Boot Process']);
+    setNavigationPath(['Visual Rails', 'Boot Process']);
   };
 
   const toggleFullscreen = () => {
@@ -145,7 +145,7 @@ function App() {
               details: moduleDetails,
               parentGem: focusedGem
             });
-            setNavigationPath(['Rails 8.0', focusedGem.name, node.name]);
+            setNavigationPath(['Visual Rails', focusedGem.name, node.name]);
             setSelectedNode(null);
           }
         } else {
@@ -163,7 +163,7 @@ function App() {
     if (selectedNode && selectedNode.id === node.id) {
       // Drill down into the gem
       setFocusedGem(node);
-      setNavigationPath(['Rails 8.0', node.name]);
+      setNavigationPath(['Visual Rails', node.name]);
       setSelectedNode(null);
     } else {
       // Just select the node
@@ -184,7 +184,7 @@ function App() {
       // Go back to gem view from module view
       setFocusedModule(null);
       setSelectedNode(null);
-      setNavigationPath(['Rails 8.0', focusedGem.name]);
+      setNavigationPath(['Visual Rails', focusedGem.name]);
     } else if (index === 2 && focusedModule) {
       // Stay in module view
       setNavigationPath(navigationPath.slice(0, index + 1));
@@ -199,7 +199,7 @@ function App() {
         <>
           <header className="app-header">
             <div className="header-content">
-              <h1>Rails 8.0 Visual Explorer</h1>
+              <h1>Visual Rails</h1>
               <SearchBar 
                 value={searchTerm} 
                 onChange={setSearchTerm}
