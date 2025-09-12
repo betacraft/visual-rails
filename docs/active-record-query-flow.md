@@ -25,7 +25,7 @@ This document details the internal flow of ActiveRecord queries in Rails 8, from
 - Represents a query that hasn't been executed yet
 - Implements lazy loading and chainable query interface
 - Located in: `activerecord/lib/active_record/relation.rb`
-- Key methods: `where`, `select`, `joins`, `includes`, `to_a`, `load`
+- Key methods: `where`, `select`, `joins`, `includes`, `to_a`, `load`, `first`, `last` (terminal methods trigger execution)
 
 #### 3. **ActiveRecord::QueryMethods**
 - Module that provides query building methods
@@ -42,7 +42,7 @@ This document details the internal flow of ActiveRecord queries in Rails 8, from
 #### 5. **Arel**
 - Abstract Syntax Tree for SQL generation
 - Converts Ruby query methods to SQL AST
-- Located in: `activerecord/lib/arel/`
+- Located in: `activerecord/lib/arel/` (embedded within ActiveRecord gem)
 - Key classes:
   - `Arel::Table` - Represents a database table
   - `Arel::Nodes::SelectStatement` - Represents a SELECT query
@@ -51,7 +51,7 @@ This document details the internal flow of ActiveRecord queries in Rails 8, from
 #### 6. **ActiveRecord::ConnectionAdapters::AbstractAdapter**
 - Base class for all database adapters
 - Handles actual database communication
-- Located in: `activerecord/lib/active_record/connection_adapters/abstract_adapter.rb`
+- Located in: `activerecord/lib/active_record/connection_adapters/abstract/abstract_adapter.rb`
 - Subclasses: `PostgreSQLAdapter`, `Mysql2Adapter`, `SQLite3Adapter`
 
 #### 7. **ActiveRecord::Result**
@@ -77,9 +77,14 @@ This document details the internal flow of ActiveRecord queries in Rails 8, from
 - Manages complex joins for associations
 - Located in: `activerecord/lib/active_record/associations/join_dependency.rb`
 
-#### 12. **ActiveRecord::PredicateBuilder**
+#### 12. **ActiveRecord::Relation::PredicateBuilder**
 - Builds Arel predicates from Ruby conditions
 - Located in: `activerecord/lib/active_record/relation/predicate_builder.rb`
+
+#### 13. **ActiveRecord::Relation::WhereClause**
+- Represents WHERE conditions in a query
+- Located in: `activerecord/lib/active_record/relation/where_clause.rb`
+- Manages predicates and their combination
 
 ## Query Flow Examples
 
@@ -97,7 +102,8 @@ User (ActiveRecord::Base)
   ├─> Relation.new(model: User)
   │     ├─> QueryMethods#where(email: 'someone@example.com')
   │     │     ├─> spawn  # Creates new Relation
-  │     │     ├─> PredicateBuilder.build(email: 'someone@example.com')
+  │     │     ├─> build_where_clause (private method)
+  │     │     │     ├─> PredicateBuilder.build(email: 'someone@example.com')
   │     │     │     └─> Creates Arel::Nodes::Equality
   │     │     └─> where_clause += new_predicates
   │     │
@@ -115,7 +121,7 @@ User (ActiveRecord::Base)
 3. `ActiveRecord::Relation`
 4. `ActiveRecord::QueryMethods`
 5. `ActiveRecord::SpawnMethods`
-6. `ActiveRecord::PredicateBuilder`
+6. `ActiveRecord::Relation::PredicateBuilder`
 7. `ActiveRecord::Relation::WhereClause`
 8. `Arel::Nodes::Equality`
 
