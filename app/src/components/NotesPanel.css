@@ -124,6 +124,64 @@
   border: 1px solid #e0e0e0;
 }
 
+/* Code blocks with syntax highlighting */
+.notes-content .code-block {
+  margin: 15px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #282c34;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.notes-content .code-language {
+  padding: 8px 15px;
+  background: #21252b;
+  color: #61dafb;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #3a3f4b;
+}
+
+.notes-content .code-block pre {
+  margin: 0;
+  padding: 15px;
+  overflow-x: auto;
+  background: #282c34;
+  border: none;
+}
+
+.notes-content .code-block code {
+  display: block;
+  background: transparent;
+  color: #abb2bf;
+  padding: 0;
+  border: none;
+  font-family: 'JetBrains Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+/* Scrollbar for code blocks */
+.notes-content .code-block pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.notes-content .code-block pre::-webkit-scrollbar-track {
+  background: #1e2127;
+}
+
+.notes-content .code-block pre::-webkit-scrollbar-thumb {
+  background: #4b5263;
+  border-radius: 3px;
+}
+
+.notes-content .code-block pre::-webkit-scrollbar-thumb:hover {
+  background: #5c6370;
+}
+
 /* Scrollbar styling */
 .notes-content::-webkit-scrollbar {
   width: 8px;

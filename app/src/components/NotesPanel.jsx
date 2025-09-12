@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { getHttpRequestFlowNotes } from './httpRequestFlowNotes';
 import './NotesPanel.css';
 
@@ -400,11 +400,17 @@ function NotesPanel({ currentPage, isExpanded, onToggle, viewType = 'activerecor
   }
 
   const renderMarkdown = (text) => {
+    // First, replace escaped backticks with actual backticks for code blocks
+    const processedText = text.replace(/\\`\\`\\`/g, '```');
+    
     // Process text line by line for markdown rendering
-    const lines = text.trim().split('\n');
+    const lines = processedText.trim().split('\n');
     const elements = [];
     let inList = false;
     let listItems = [];
+    let inCodeBlock = false;
+    let codeBlockLines = [];
+    let codeBlockLanguage = '';
     
     const processInlineMarkdown = (text) => {
       // Handle bold text
@@ -431,6 +437,45 @@ function NotesPanel({ currentPage, isExpanded, onToggle, viewType = 'activerecor
     
     lines.forEach((line, index) => {
       const trimmedLine = line.trim();
+      
+      // Check for code block markers
+      if (trimmedLine.startsWith('```')) {
+        if (!inCodeBlock) {
+          // Starting a code block
+          inCodeBlock = true;
+          codeBlockLanguage = trimmedLine.slice(3).trim() || 'text';
+          codeBlockLines = [];
+        } else {
+          // Ending a code block
+          inCodeBlock = false;
+          
+          // Close any open list first
+          if (inList && listItems.length > 0) {
+            elements.push(<ul key={`list-pre-code-${index}`}>{listItems}</ul>);
+            listItems = [];
+            inList = false;
+          }
+          
+          elements.push(
+            <div key={`codeblock-${index}`} className="code-block">
+              <div className="code-language">{codeBlockLanguage}</div>
+              <pre>
+                <code>
+                  {codeBlockLines.join('\n')}
+                </code>
+              </pre>
+            </div>
+          );
+          codeBlockLanguage = '';
+        }
+        return;
+      }
+      
+      // If we're in a code block, collect the lines
+      if (inCodeBlock) {
+        codeBlockLines.push(line);
+        return;
+      }
       
       // Skip empty lines
       if (!trimmedLine) {
