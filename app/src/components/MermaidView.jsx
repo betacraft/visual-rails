@@ -10,31 +10,42 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [isRendering, setIsRendering] = useState(false);
+  const fitToScreenTimeoutRef = useRef(null);
+  const renderTimeoutRef = useRef(null);
 
   useEffect(() => {
     console.log('Initializing Mermaid...');
-    mermaid.initialize({ 
-      startOnLoad: false,
-      theme: 'default',
-      flowchart: {
-        curve: 'basis',
-        nodeSpacing: 80,
-        rankSpacing: 150,
-        padding: 20,
-        useMaxWidth: false
-      },
-      themeVariables: {
-        primaryColor: '#2196F3',
-        primaryTextColor: '#fff',
-        primaryBorderColor: '#1976D2',
-        lineColor: '#757575',
-        secondaryColor: '#4CAF50',
-        tertiaryColor: '#FF9800',
-        fontSize: '16px'
-      },
-      logLevel: 'debug'
-    });
-    console.log('Mermaid initialized');
+    try {
+      mermaid.initialize({ 
+        startOnLoad: false,
+        theme: 'default',
+        flowchart: {
+          curve: 'basis',
+          nodeSpacing: 80,
+          rankSpacing: 150,
+          padding: 20,
+          useMaxWidth: false,
+          htmlLabels: true,
+          rankdir: 'TD'
+        },
+        themeVariables: {
+          primaryColor: '#2196F3',
+          primaryTextColor: '#fff',
+          primaryBorderColor: '#1976D2',
+          lineColor: '#757575',
+          secondaryColor: '#4CAF50',
+          tertiaryColor: '#FF9800',
+          fontSize: '16px'
+        },
+        logLevel: 'error', // Changed from 'debug' to reduce console noise
+        securityLevel: 'loose', // Allow more flexibility in rendering
+        suppressErrorRendering: true // Prevent mermaid from showing error in diagram
+      });
+      console.log('Mermaid initialized');
+    } catch (error) {
+      console.error('Failed to initialize Mermaid:', error);
+    }
   }, []);
 
   useEffect(() => {
@@ -69,10 +80,27 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
   useEffect(() => {
     console.log('MermaidCode updated, length:', mermaidCode?.length);
     if (mermaidCode && containerRef.current) {
-      renderMermaidDiagram();
+      // Clear any pending render timeouts
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+      // Debounce rendering to avoid rapid re-renders
+      renderTimeoutRef.current = setTimeout(() => {
+        renderMermaidDiagram();
+      }, 100);
     } else if (!mermaidCode) {
       console.log('No mermaid code to render');
     }
+    
+    // Cleanup on unmount or when mermaidCode changes
+    return () => {
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+      if (fitToScreenTimeoutRef.current) {
+        clearTimeout(fitToScreenTimeoutRef.current);
+      }
+    };
   }, [mermaidCode]);
 
   const renderMermaidDiagram = async () => {
@@ -80,6 +108,14 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
       console.log('Container or diagram ref not ready');
       return;
     }
+    
+    // Prevent concurrent renders
+    if (isRendering) {
+      console.log('Already rendering, skipping...');
+      return;
+    }
+    
+    setIsRendering(true);
     
     // Debug: Log the generated code
     console.log('=== MERMAID RENDERING START ===');
@@ -100,10 +136,13 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
     console.log('Mermaid div created, attempting to render...');
     
     try {
+      // Wait a bit to ensure DOM is ready
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
       // Re-run mermaid on the new content
       await mermaid.run({
-        querySelector: '.mermaid',
-        suppressErrors: false
+        querySelector: `#${mermaidDiv.id}`, // Use specific ID instead of class
+        suppressErrors: true
       });
       
       console.log('Mermaid.run() completed');
@@ -126,14 +165,25 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
       
       attachClickHandlers();
       
+      // Clear any existing fitToScreen timeout
+      if (fitToScreenTimeoutRef.current) {
+        clearTimeout(fitToScreenTimeoutRef.current);
+      }
+      
       // Auto-fit on initial render with longer delay for complex diagrams
-      setTimeout(() => {
+      fitToScreenTimeoutRef.current = setTimeout(() => {
         console.log('Attempting fitToScreen...');
         fitToScreen();
       }, 500);
+      
+      // Reset rendering state after successful render
+      setIsRendering(false);
     } catch (error) {
       console.error('Mermaid rendering error:', error);
       console.error('Failed Mermaid code:', mermaidCode);
+      
+      // Reset rendering state on error
+      setIsRendering(false);
       // Show error message - use textContent for the code to avoid HTML issues
       const errorDiv = document.createElement('div');
       errorDiv.style.cssText = 'padding: 20px; color: red;';
@@ -211,30 +261,82 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
     setPanOffset({ x: 0, y: 0 });
   };
 
-  const fitToScreen = () => {
+  const fitToScreen = (retryCount = 0) => {
     if (!containerRef.current || !diagramRef.current) return;
     
     const svg = diagramRef.current.querySelector('svg');
     if (!svg) {
       console.log('SVG not found, retrying...');
-      setTimeout(fitToScreen, 200);
+      if (retryCount < 5) {
+        // Exponential backoff: 200, 400, 800, 1600, 3200ms
+        setTimeout(() => fitToScreen(retryCount + 1), 200 * Math.pow(2, retryCount));
+      }
       return;
     }
     
-    // Get the actual SVG dimensions
-    const svgWidth = svg.getAttribute('width') || svg.viewBox?.baseVal?.width || svg.getBBox().width;
-    const svgHeight = svg.getAttribute('height') || svg.viewBox?.baseVal?.height || svg.getBBox().height;
-    
-    const containerRect = containerRef.current.getBoundingClientRect();
-    
-    const scaleX = containerRect.width / parseFloat(svgWidth);
-    const scaleY = containerRect.height / parseFloat(svgHeight);
-    const scale = Math.min(scaleX, scaleY, 1) * 0.8; // 80% to add more padding
-    
-    console.log('Fit to screen:', { svgWidth, svgHeight, containerWidth: containerRect.width, containerHeight: containerRect.height, scale });
-    
-    setZoomLevel(scale);
-    setPanOffset({ x: 0, y: 0 });
+    try {
+      // Check if SVG is actually in the DOM and visible
+      if (!svg.isConnected || !svg.offsetParent) {
+        console.log('SVG not ready in DOM, retrying...');
+        if (retryCount < 3) {
+          setTimeout(() => fitToScreen(retryCount + 1), 300);
+        }
+        return;
+      }
+      
+      // Get the actual SVG dimensions - use safer methods
+      let svgWidth, svgHeight;
+      
+      // First try: getAttribute
+      svgWidth = svg.getAttribute('width');
+      svgHeight = svg.getAttribute('height');
+      
+      // Second try: viewBox
+      if (!svgWidth || !svgHeight) {
+        const viewBox = svg.viewBox?.baseVal;
+        if (viewBox) {
+          svgWidth = svgWidth || viewBox.width;
+          svgHeight = svgHeight || viewBox.height;
+        }
+      }
+      
+      // Third try: getBoundingClientRect (safest)
+      if (!svgWidth || !svgHeight || svgWidth === '100%' || svgHeight === '100%') {
+        const rect = svg.getBoundingClientRect();
+        svgWidth = rect.width || 800; // Default width
+        svgHeight = rect.height || 600; // Default height
+      }
+      
+      // Last resort: try getBBox if it exists and is safe to call
+      if ((!svgWidth || !svgHeight || svgWidth === 0 || svgHeight === 0) && 
+          svg.getBBox && typeof svg.getBBox === 'function') {
+        try {
+          const bbox = svg.getBBox();
+          svgWidth = svgWidth || bbox.width || 800;
+          svgHeight = svgHeight || bbox.height || 600;
+        } catch (bboxError) {
+          console.warn('getBBox failed, using defaults:', bboxError);
+          svgWidth = svgWidth || 800;
+          svgHeight = svgHeight || 600;
+        }
+      }
+      
+      const containerRect = containerRef.current.getBoundingClientRect();
+      
+      const scaleX = containerRect.width / parseFloat(svgWidth);
+      const scaleY = containerRect.height / parseFloat(svgHeight);
+      const scale = Math.min(scaleX, scaleY, 1) * 0.8; // 80% to add more padding
+      
+      console.log('Fit to screen:', { svgWidth, svgHeight, containerWidth: containerRect.width, containerHeight: containerRect.height, scale });
+      
+      setZoomLevel(scale);
+      setPanOffset({ x: 0, y: 0 });
+    } catch (error) {
+      console.error('Error in fitToScreen:', error);
+      // Set default zoom level on error
+      setZoomLevel(0.8);
+      setPanOffset({ x: 0, y: 0 });
+    }
   };
 
   // Pan/drag handling
@@ -279,6 +381,13 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
     
     return () => {
       container.removeEventListener('wheel', handleWheel);
+      // Clean up any pending timeouts on unmount
+      if (fitToScreenTimeoutRef.current) {
+        clearTimeout(fitToScreenTimeoutRef.current);
+      }
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
     };
   }, []);
 
