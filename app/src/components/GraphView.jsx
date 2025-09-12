@@ -18,6 +18,16 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
   const [currentPage, setCurrentPage] = useState(1);
   const [notesExpanded, setNotesExpanded] = useState(false);
   const totalPages = 6;
+  
+  // Page titles for activerecord-flow
+  const pageTitles = {
+    1: "Core Components Overview",
+    2: "Lazy Query Initialization", 
+    3: "Simple Query Execution",
+    4: "Query with Joins",
+    5: "Complex Query with Includes",
+    6: "SQL Generation Pipeline"
+  };
 
   // Handle keyboard navigation for activerecord-flow pages
   useEffect(() => {
@@ -54,7 +64,25 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
     const svg = d3.select(svgRef.current);
     
     const width = container.clientWidth;
-    const height = container.clientHeight;
+    let height = container.clientHeight;
+    
+    // For activerecord-flow, calculate height based on number of nodes
+    if (currentView === 'activerecord-flow') {
+      // Get the node count for current page
+      let nodeCount = 0;
+      switch(currentPage) {
+        case 1: nodeCount = 13; break; // Core Components
+        case 2: nodeCount = 13; break; // Lazy Init
+        case 3: nodeCount = 20; break; // Simple Execution
+        case 4: nodeCount = 19; break; // Joins
+        case 5: nodeCount = 23; break; // Includes
+        case 6: nodeCount = 18; break; // SQL Pipeline
+        default: nodeCount = 13;
+      }
+      // Use fixed spacing of 100px between nodes
+      const nodeSpacing = 100;
+      height = Math.max(container.clientHeight, nodeSpacing * (nodeCount + 2));
+    }
 
     svg.attr('width', width).attr('height', height);
 
@@ -261,10 +289,17 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
         const nodeColor = typeColors[d.type] || '#757575';
         
         // Render as rounded rectangle
+        // Adjust width based on content length for activerecord-flow
+        let nodeWidth = 120;
+        if (currentView === 'activerecord-flow') {
+          if (d.name.length > 30) nodeWidth = 200;
+          else if (d.name.length > 20) nodeWidth = 160;
+          else if (d.name.length > 15) nodeWidth = 140;
+        }
         selection.append("rect")
-          .attr("x", -60)
+          .attr("x", -nodeWidth/2)
           .attr("y", -25)
-          .attr("width", 120)
+          .attr("width", nodeWidth)
           .attr("height", 50)
           .attr("rx", 10)
           .attr("fill", nodeColor)
@@ -369,20 +404,31 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
 
       if (currentView === 'request-flow' || currentView === 'activerecord-flow' || currentView === 'boot-process') {
         // Flow diagram text
-        textElement.text(d.name)
-          .attr("dy", "-0.3em")
-          .style("font-size", "12px")
-          .style("font-weight", "600");
-          
-        // Add description below
-        selection.append("text")
-          .text(d.description)
-          .attr("text-anchor", "middle")
-          .attr("dy", "1em")
-          .style("fill", "white")
-          .style("font-size", "9px")
-          .style("opacity", 0.9)
-          .style("pointer-events", "none");
+        if (currentView === 'activerecord-flow') {
+          // For activerecord-flow, adjust font size based on text length
+          const fontSize = d.name.length > 30 ? "10px" : d.name.length > 20 ? "11px" : "12px";
+          textElement.text(d.name)
+            .attr("dy", "0.35em")
+            .style("font-size", fontSize)
+            .style("font-weight", "600");
+          // No description for activerecord-flow to keep it clean
+        } else {
+          // For other flow diagrams, show name and description
+          textElement.text(d.name)
+            .attr("dy", "-0.3em")
+            .style("font-size", "12px")
+            .style("font-weight", "600");
+            
+          // Add description below
+          selection.append("text")
+            .text(d.description)
+            .attr("text-anchor", "middle")
+            .attr("dy", "1em")
+            .style("fill", "white")
+            .style("font-size", "9px")
+            .style("opacity", 0.9)
+            .style("pointer-events", "none");
+        }
       } else if (d.type === 'component') {
         // Component names - simple and small
         textElement.text(d.name)
@@ -526,10 +572,16 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
     if (currentView === 'request-flow' || currentView === 'activerecord-flow' || currentView === 'boot-process') {
       // Flow diagram layout - vertical flow
       setTimeout(() => {
-        const spacing = height / (nodes.length + 1);
+        // Use fixed spacing for activerecord-flow, dynamic for others
+        const spacing = currentView === 'activerecord-flow' 
+          ? 100  // Fixed 100px spacing for activerecord-flow
+          : height / (nodes.length + 1);  // Dynamic spacing for other flows
+        
         nodes.forEach((node, index) => {
           node.fx = width / 2;
-          node.fy = spacing * (index + 1);
+          node.fy = currentView === 'activerecord-flow'
+            ? spacing * (index + 1)  // Fixed spacing from top
+            : spacing * (index + 1); // Dynamic spacing within container
         });
         
         simulation.alpha(0.3).restart();
@@ -659,13 +711,18 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
         </div>
       )}
       {currentView === 'activerecord-flow' && (
-        <div className="gem-view-hint">
-          <strong>ActiveRecord Query Flow</strong>
-          <br />
-          <small>How database queries work in Rails</small>
-          <br />
-          <small>Press <kbd>ESC</kbd> or <kbd>1</kbd> to return to overview</small>
-        </div>
+        <>
+          <div className="gem-view-hint">
+            <strong>ActiveRecord Query Flow</strong>
+            <br />
+            <small>How database queries work in Rails</small>
+            <br />
+            <small>Press <kbd>ESC</kbd> or <kbd>1</kbd> to return to overview</small>
+          </div>
+          <div className="page-title">
+            <h2>{pageTitles[currentPage]}</h2>
+          </div>
+        </>
       )}
       {currentView === 'boot-process' && (
         <div className="gem-view-hint">

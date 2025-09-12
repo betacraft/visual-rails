@@ -3,21 +3,21 @@
 export function generateCoreComponentsD3Data() {
   const nodes = [
     // Core Components
-    { id: 'base', name: 'ActiveRecord::Base', type: 'core', description: 'Entry point for models', group: 'core', loc: 5000 },
-    { id: 'relation', name: 'ActiveRecord::Relation', type: 'core', description: 'Lazy query builder', group: 'core', loc: 3000 },
-    { id: 'query_methods', name: 'QueryMethods', type: 'core', description: 'Query DSL methods', group: 'core', loc: 2500 },
-    { id: 'spawn_methods', name: 'SpawnMethods', type: 'core', description: 'Relation spawning', group: 'core', loc: 800 },
-    { id: 'arel', name: 'Arel', type: 'sql', description: 'SQL AST builder', group: 'sql', loc: 4000 },
-    { id: 'connection', name: 'ConnectionAdapter', type: 'sql', description: 'Database interface', group: 'sql', loc: 3500 },
-    { id: 'result', name: 'ActiveRecord::Result', type: 'sql', description: 'Query results', group: 'sql', loc: 600 },
+    { id: 'base', name: 'ActiveRecord::Base', type: 'core', description: 'Entry point for models', group: 'core' },
+    { id: 'relation', name: 'ActiveRecord::Relation', type: 'core', description: 'Lazy query builder', group: 'core' },
+    { id: 'query_methods', name: 'QueryMethods', type: 'core', description: 'Query DSL methods', group: 'core' },
+    { id: 'spawn_methods', name: 'SpawnMethods', type: 'core', description: 'Relation spawning', group: 'core' },
+    { id: 'arel', name: 'Arel', type: 'sql', description: 'SQL AST builder', group: 'sql' },
+    { id: 'connection', name: 'ConnectionAdapter', type: 'sql', description: 'Database interface', group: 'sql' },
+    { id: 'result', name: 'ActiveRecord::Result', type: 'sql', description: 'Query results', group: 'sql' },
     
     // Supporting Modules
-    { id: 'querying', name: 'Querying', type: 'support', description: 'Class-level methods', group: 'support', loc: 400 },
-    { id: 'scoping', name: 'Scoping', type: 'support', description: 'Query scopes', group: 'support', loc: 1200 },
-    { id: 'predicate_builder', name: 'PredicateBuilder', type: 'support', description: 'Condition builder', group: 'support', loc: 900 },
-    { id: 'where_clause', name: 'WhereClause', type: 'support', description: 'WHERE storage', group: 'support', loc: 500 },
-    { id: 'join_dependency', name: 'JoinDependency', type: 'support', description: 'Association joins', group: 'support', loc: 1500 },
-    { id: 'preloader', name: 'Preloader', type: 'support', description: 'N+1 prevention', group: 'support', loc: 1800 }
+    { id: 'querying', name: 'Querying', type: 'support', description: 'Class-level methods', group: 'support' },
+    { id: 'scoping', name: 'Scoping', type: 'support', description: 'Query scopes', group: 'support' },
+    { id: 'predicate_builder', name: 'PredicateBuilder', type: 'support', description: 'Condition builder', group: 'support' },
+    { id: 'where_clause', name: 'WhereClause', type: 'support', description: 'WHERE storage', group: 'support' },
+    { id: 'join_dependency', name: 'JoinDependency', type: 'support', description: 'Association joins', group: 'support' },
+    { id: 'preloader', name: 'Preloader', type: 'support', description: 'N+1 prevention', group: 'support' }
   ];
 
   const links = [
@@ -41,19 +41,19 @@ export function generateCoreComponentsD3Data() {
 
 export function generateLazyInitD3Data() {
   const nodes = [
-    { id: 'user_where', name: "User.where(email: 'user@example.com')", type: 'entry', group: 'query', loc: 100 },
-    { id: 'querying_where', name: 'Querying.where', type: 'process', group: 'delegation', loc: 200 },
-    { id: 'all_where', name: 'all.where', type: 'process', group: 'delegation', loc: 150 },
-    { id: 'new_relation', name: 'Relation.new', type: 'process', group: 'creation', loc: 300 },
-    { id: 'query_methods_where', name: 'QueryMethods#where', type: 'process', group: 'building', loc: 400 },
-    { id: 'spawn', name: 'SpawnMethods#spawn', type: 'process', group: 'building', loc: 250 },
-    { id: 'build_where', name: 'build_where_clause', type: 'storage', group: 'building', loc: 350 },
-    { id: 'predicate_build', name: 'PredicateBuilder.build', type: 'storage', group: 'conversion', loc: 450 },
-    { id: 'arel_equality', name: "Arel::Nodes::Equality", type: 'storage', group: 'arel', loc: 200 },
-    { id: 'where_clause_new', name: 'WhereClause.new', type: 'storage', group: 'storage', loc: 180 },
-    { id: 'store_clause', name: 'relation.where_clause +=', type: 'storage', group: 'storage', loc: 150 },
-    { id: 'return_relation', name: 'Relation (unloaded)', type: 'result', group: 'result', loc: 500 },
-    { id: 'no_sql', name: '❌ No SQL Executed', type: 'result', group: 'result', loc: 100 }
+    { id: 'user_where', name: "User.where(email: 'user@example.com')", type: 'entry', group: 'query' },
+    { id: 'querying_where', name: 'Querying.where', type: 'process', group: 'delegation' },
+    { id: 'all_where', name: 'all.where', type: 'process', group: 'delegation' },
+    { id: 'new_relation', name: 'Relation.new', type: 'process', group: 'creation' },
+    { id: 'query_methods_where', name: 'QueryMethods#where', type: 'process', group: 'building' },
+    { id: 'spawn', name: 'SpawnMethods#spawn', type: 'process', group: 'building' },
+    { id: 'build_where', name: 'build_where_clause', type: 'storage', group: 'building' },
+    { id: 'predicate_build', name: 'PredicateBuilder.build', type: 'storage', group: 'conversion' },
+    { id: 'arel_equality', name: "Arel::Nodes::Equality", type: 'storage', group: 'arel' },
+    { id: 'where_clause_new', name: 'WhereClause.new', type: 'storage', group: 'storage' },
+    { id: 'store_clause', name: 'relation.where_clause +=', type: 'storage', group: 'storage' },
+    { id: 'return_relation', name: 'Relation (unloaded)', type: 'result', group: 'result' },
+    { id: 'no_sql', name: '❌ No SQL Executed', type: 'result', group: 'result' }
   ];
 
   const links = [
@@ -76,27 +76,27 @@ export function generateLazyInitD3Data() {
 
 export function generateSimpleExecutionD3Data() {
   const nodes = [
-    { id: 'query', name: "User.where(...).first", type: 'entry', group: 'query', loc: 100 },
-    { id: 'first', name: 'Relation#first', type: 'trigger', group: 'execution', loc: 200 },
-    { id: 'find_nth', name: 'find_nth(0)', type: 'trigger', group: 'execution', loc: 150 },
-    { id: 'limit', name: 'limit(1)', type: 'trigger', group: 'execution', loc: 120 },
-    { id: 'to_a', name: 'Relation#to_a', type: 'trigger', group: 'execution', loc: 180 },
-    { id: 'load', name: 'load', type: 'trigger', group: 'execution', loc: 140 },
-    { id: 'exec_queries', name: 'exec_queries', type: 'trigger', group: 'execution', loc: 300 },
-    { id: 'build_arel', name: 'build_arel', type: 'arel', group: 'arel', loc: 400 },
-    { id: 'select_manager', name: 'Arel::SelectManager', type: 'arel', group: 'arel', loc: 350 },
-    { id: 'build_select', name: 'build_select', type: 'arel', group: 'arel', loc: 200 },
-    { id: 'build_where_arel', name: 'build_where', type: 'arel', group: 'arel', loc: 250 },
-    { id: 'build_limit', name: 'build_limit', type: 'arel', group: 'arel', loc: 150 },
-    { id: 'to_sql', name: 'to_sql(arel)', type: 'sql', group: 'sql', loc: 300 },
-    { id: 'visitor', name: 'Arel::Visitors::ToSql', type: 'sql', group: 'sql', loc: 400 },
-    { id: 'sql_string', name: 'SQL String', type: 'sql', group: 'sql', loc: 100 },
-    { id: 'execute', name: 'connection.execute', type: 'sql', group: 'database', loc: 250 },
-    { id: 'db_driver', name: 'Database Driver', type: 'sql', group: 'database', loc: 200 },
-    { id: 'raw_result', name: 'Raw Result', type: 'result', group: 'result', loc: 150 },
-    { id: 'ar_result', name: 'ActiveRecord::Result', type: 'result', group: 'result', loc: 300 },
-    { id: 'instantiate', name: 'instantiate_records', type: 'result', group: 'result', loc: 400 },
-    { id: 'user_instance', name: 'User Instance', type: 'result', group: 'result', loc: 200 }
+    { id: 'query', name: "User.where(...).first", type: 'entry', group: 'query' },
+    { id: 'first', name: 'Relation#first', type: 'trigger', group: 'execution' },
+    { id: 'find_nth', name: 'find_nth(0)', type: 'trigger', group: 'execution' },
+    { id: 'limit', name: 'limit(1)', type: 'trigger', group: 'execution' },
+    { id: 'to_a', name: 'Relation#to_a', type: 'trigger', group: 'execution' },
+    { id: 'load', name: 'load', type: 'trigger', group: 'execution' },
+    { id: 'exec_queries', name: 'exec_queries', type: 'trigger', group: 'execution' },
+    { id: 'build_arel', name: 'build_arel', type: 'arel', group: 'arel' },
+    { id: 'select_manager', name: 'Arel::SelectManager', type: 'arel', group: 'arel' },
+    { id: 'build_select', name: 'build_select', type: 'arel', group: 'arel' },
+    { id: 'build_where_arel', name: 'build_where', type: 'arel', group: 'arel' },
+    { id: 'build_limit', name: 'build_limit', type: 'arel', group: 'arel' },
+    { id: 'to_sql', name: 'to_sql(arel)', type: 'sql', group: 'sql' },
+    { id: 'visitor', name: 'Arel::Visitors::ToSql', type: 'sql', group: 'sql' },
+    { id: 'sql_string', name: 'SQL String', type: 'sql', group: 'sql' },
+    { id: 'execute', name: 'connection.execute', type: 'sql', group: 'database' },
+    { id: 'db_driver', name: 'Database Driver', type: 'sql', group: 'database' },
+    { id: 'raw_result', name: 'Raw Result', type: 'result', group: 'result' },
+    { id: 'ar_result', name: 'ActiveRecord::Result', type: 'result', group: 'result' },
+    { id: 'instantiate', name: 'instantiate_records', type: 'result', group: 'result' },
+    { id: 'user_instance', name: 'User Instance', type: 'result', group: 'result' }
   ];
 
   const links = [
@@ -127,26 +127,26 @@ export function generateSimpleExecutionD3Data() {
 
 export function generateJoinsD3Data() {
   const nodes = [
-    { id: 'query', name: 'User.joins(:posts).where(...)', type: 'entry', group: 'query', loc: 150 },
-    { id: 'joins', name: 'QueryMethods#joins', type: 'query', group: 'building', loc: 300 },
-    { id: 'spawn_join', name: 'spawn + joins_values', type: 'query', group: 'building', loc: 200 },
-    { id: 'where', name: 'QueryMethods#where', type: 'condition', group: 'building', loc: 350 },
-    { id: 'nested_hash', name: 'posts: {published: true}', type: 'condition', group: 'building', loc: 150 },
-    { id: 'resolve_assoc', name: 'resolve_association', type: 'condition', group: 'resolution', loc: 250 },
-    { id: 'build_assoc', name: 'build_for_association', type: 'condition', group: 'resolution', loc: 200 },
-    { id: 'posts_table', name: "Table['posts']['published']", type: 'condition', group: 'arel', loc: 180 },
-    { id: 'exec_query', name: 'exec_queries', type: 'execution', group: 'execution', loc: 400 },
-    { id: 'build_arel', name: 'build_arel', type: 'execution', group: 'execution', loc: 350 },
-    { id: 'build_joins', name: 'build_joins', type: 'join', group: 'joins', loc: 500 },
-    { id: 'join_dep', name: 'JoinDependency.new', type: 'join', group: 'joins', loc: 450 },
-    { id: 'reflection', name: 'reflect_on_association', type: 'join', group: 'joins', loc: 200 },
-    { id: 'join_assoc', name: 'JoinAssociation', type: 'join', group: 'joins', loc: 300 },
-    { id: 'join_constraints', name: 'ON posts.user_id = users.id', type: 'join', group: 'joins', loc: 150 },
-    { id: 'inner_join', name: 'Arel::Nodes::InnerJoin', type: 'join', group: 'arel', loc: 250 },
-    { id: 'complete_arel', name: 'Complete Arel AST', type: 'sql', group: 'arel', loc: 400 },
-    { id: 'to_sql', name: 'to_sql(arel)', type: 'sql', group: 'sql', loc: 300 },
-    { id: 'final_sql', name: 'SELECT ... INNER JOIN ...', type: 'sql', group: 'sql', loc: 200 },
-    { id: 'results', name: 'User instances', type: 'result', group: 'result', loc: 350 }
+    { id: 'query', name: 'User.joins(:posts).where(...)', type: 'entry', group: 'query' },
+    { id: 'joins', name: 'QueryMethods#joins', type: 'query', group: 'building' },
+    { id: 'spawn_join', name: 'spawn + joins_values', type: 'query', group: 'building' },
+    { id: 'where', name: 'QueryMethods#where', type: 'condition', group: 'building' },
+    { id: 'nested_hash', name: 'posts: {published: true}', type: 'condition', group: 'building' },
+    { id: 'resolve_assoc', name: 'resolve_association', type: 'condition', group: 'resolution' },
+    { id: 'build_assoc', name: 'build_for_association', type: 'condition', group: 'resolution' },
+    { id: 'posts_table', name: "Table['posts']['published']", type: 'condition', group: 'arel' },
+    { id: 'exec_query', name: 'exec_queries', type: 'execution', group: 'execution' },
+    { id: 'build_arel', name: 'build_arel', type: 'execution', group: 'execution' },
+    { id: 'build_joins', name: 'build_joins', type: 'join', group: 'joins' },
+    { id: 'join_dep', name: 'JoinDependency.new', type: 'join', group: 'joins' },
+    { id: 'reflection', name: 'reflect_on_association', type: 'join', group: 'joins' },
+    { id: 'join_assoc', name: 'JoinAssociation', type: 'join', group: 'joins' },
+    { id: 'join_constraints', name: 'ON posts.user_id = users.id', type: 'join', group: 'joins' },
+    { id: 'inner_join', name: 'Arel::Nodes::InnerJoin', type: 'join', group: 'arel' },
+    { id: 'complete_arel', name: 'Complete Arel AST', type: 'sql', group: 'arel' },
+    { id: 'to_sql', name: 'to_sql(arel)', type: 'sql', group: 'sql' },
+    { id: 'final_sql', name: 'SELECT ... INNER JOIN ...', type: 'sql', group: 'sql' },
+    { id: 'results', name: 'User instances', type: 'result', group: 'result' }
   ];
 
   const links = [
@@ -177,36 +177,36 @@ export function generateJoinsD3Data() {
 export function generateIncludesD3Data() {
   const nodes = [
     // Main query flow
-    { id: 'query', name: 'User.includes(:posts, :profile)', type: 'entry', group: 'query', loc: 200 },
-    { id: 'includes', name: 'QueryMethods#includes', type: 'main', group: 'query', loc: 300 },
-    { id: 'includes_values', name: 'includes_values = [...]', type: 'main', group: 'query', loc: 150 },
-    { id: 'main_query', name: 'exec_queries', type: 'main', group: 'execution', loc: 400 },
-    { id: 'build_main', name: 'build_arel (no includes)', type: 'main', group: 'execution', loc: 350 },
-    { id: 'main_sql', name: 'SELECT users.* ...', type: 'main', group: 'sql', loc: 200 },
-    { id: 'execute_main', name: 'connection.select_all', type: 'main', group: 'sql', loc: 250 },
-    { id: 'user_records', name: 'User instances [1,2,3...]', type: 'main', group: 'result', loc: 300 },
+    { id: 'query', name: 'User.includes(:posts, :profile)', type: 'entry', group: 'query' },
+    { id: 'includes', name: 'QueryMethods#includes', type: 'main', group: 'query' },
+    { id: 'includes_values', name: 'includes_values = [...]', type: 'main', group: 'query' },
+    { id: 'main_query', name: 'exec_queries', type: 'main', group: 'execution' },
+    { id: 'build_main', name: 'build_arel (no includes)', type: 'main', group: 'execution' },
+    { id: 'main_sql', name: 'SELECT users.* ...', type: 'main', group: 'sql' },
+    { id: 'execute_main', name: 'connection.select_all', type: 'main', group: 'sql' },
+    { id: 'user_records', name: 'User instances [1,2,3...]', type: 'main', group: 'result' },
     
     // Preloading flow
-    { id: 'preload_assoc', name: 'preload_associations', type: 'preload', group: 'preload', loc: 500 },
-    { id: 'preloader_new', name: 'Preloader.new', type: 'preload', group: 'preload', loc: 450 },
+    { id: 'preload_assoc', name: 'preload_associations', type: 'preload', group: 'preload' },
+    { id: 'preloader_new', name: 'Preloader.new', type: 'preload', group: 'preload' },
     
     // Posts preloading
-    { id: 'preload_posts', name: 'preloaders_for(:posts)', type: 'preload', group: 'posts', loc: 400 },
-    { id: 'has_many_loader', name: 'Preloader::HasMany', type: 'preload', group: 'posts', loc: 350 },
-    { id: 'posts_query', name: 'Post.where(user_id: IN)', type: 'sql', group: 'posts', loc: 250 },
-    { id: 'posts_sql', name: 'SELECT posts.* ...', type: 'sql', group: 'posts', loc: 200 },
-    { id: 'posts_result', name: 'Load all posts', type: 'assoc', group: 'posts', loc: 300 },
-    { id: 'associate_posts', name: 'Associate to users', type: 'assoc', group: 'posts', loc: 250 },
+    { id: 'preload_posts', name: 'preloaders_for(:posts)', type: 'preload', group: 'posts' },
+    { id: 'has_many_loader', name: 'Preloader::HasMany', type: 'preload', group: 'posts' },
+    { id: 'posts_query', name: 'Post.where(user_id: IN)', type: 'sql', group: 'posts' },
+    { id: 'posts_sql', name: 'SELECT posts.* ...', type: 'sql', group: 'posts' },
+    { id: 'posts_result', name: 'Load all posts', type: 'assoc', group: 'posts' },
+    { id: 'associate_posts', name: 'Associate to users', type: 'assoc', group: 'posts' },
     
     // Profile preloading
-    { id: 'preload_profile', name: 'preloaders_for(:profile)', type: 'preload', group: 'profile', loc: 400 },
-    { id: 'has_one_loader', name: 'Preloader::HasOne', type: 'preload', group: 'profile', loc: 350 },
-    { id: 'profile_query', name: 'Profile.where(user_id: IN)', type: 'sql', group: 'profile', loc: 250 },
-    { id: 'profile_sql', name: 'SELECT profiles.* ...', type: 'sql', group: 'profile', loc: 200 },
-    { id: 'profile_result', name: 'Load all profiles', type: 'assoc', group: 'profile', loc: 300 },
-    { id: 'associate_profile', name: 'Associate to users', type: 'assoc', group: 'profile', loc: 250 },
+    { id: 'preload_profile', name: 'preloaders_for(:profile)', type: 'preload', group: 'profile' },
+    { id: 'has_one_loader', name: 'Preloader::HasOne', type: 'preload', group: 'profile' },
+    { id: 'profile_query', name: 'Profile.where(user_id: IN)', type: 'sql', group: 'profile' },
+    { id: 'profile_sql', name: 'SELECT profiles.* ...', type: 'sql', group: 'profile' },
+    { id: 'profile_result', name: 'Load all profiles', type: 'assoc', group: 'profile' },
+    { id: 'associate_profile', name: 'Associate to users', type: 'assoc', group: 'profile' },
     
-    { id: 'complete', name: 'Users with associations', type: 'result', group: 'result', loc: 500 }
+    { id: 'complete', name: 'Users with associations', type: 'result', group: 'result' }
   ];
 
   const links = [
@@ -250,31 +250,31 @@ export function generateIncludesD3Data() {
 export function generateSQLPipelineD3Data() {
   const nodes = [
     // Ruby DSL Layer
-    { id: 'ruby_dsl', name: 'Ruby DSL Methods', type: 'ruby', group: 'ruby', loc: 400 },
-    { id: 'internal_state', name: 'Internal State Storage', type: 'ruby', group: 'ruby', loc: 350 },
-    { id: 'where_clause', name: 'WhereClause', type: 'ruby', group: 'storage', loc: 300 },
-    { id: 'joins_values', name: 'joins_values', type: 'ruby', group: 'storage', loc: 250 },
-    { id: 'select_values', name: 'select_values', type: 'ruby', group: 'storage', loc: 200 },
-    { id: 'order_values', name: 'order_values', type: 'ruby', group: 'storage', loc: 180 },
+    { id: 'ruby_dsl', name: 'Ruby DSL Methods', type: 'ruby', group: 'ruby' },
+    { id: 'internal_state', name: 'Internal State Storage', type: 'ruby', group: 'ruby' },
+    { id: 'where_clause', name: 'WhereClause', type: 'ruby', group: 'storage' },
+    { id: 'joins_values', name: 'joins_values', type: 'ruby', group: 'storage' },
+    { id: 'select_values', name: 'select_values', type: 'ruby', group: 'storage' },
+    { id: 'order_values', name: 'order_values', type: 'ruby', group: 'storage' },
     
     // Conversion Layer
-    { id: 'predicate_builder', name: 'PredicateBuilder', type: 'arel', group: 'conversion', loc: 500 },
-    { id: 'arel_nodes', name: 'Arel Nodes', type: 'arel', group: 'arel', loc: 450 },
-    { id: 'select_manager', name: 'Arel::SelectManager', type: 'arel', group: 'arel', loc: 400 },
-    { id: 'select_statement', name: 'SelectStatement AST', type: 'arel', group: 'arel', loc: 350 },
+    { id: 'predicate_builder', name: 'PredicateBuilder', type: 'arel', group: 'conversion' },
+    { id: 'arel_nodes', name: 'Arel Nodes', type: 'arel', group: 'arel' },
+    { id: 'select_manager', name: 'Arel::SelectManager', type: 'arel', group: 'arel' },
+    { id: 'select_statement', name: 'SelectStatement AST', type: 'arel', group: 'arel' },
     
     // Visitor Pattern Layer
-    { id: 'visitor', name: 'Arel::Visitors::ToSql', type: 'visitor', group: 'visitor', loc: 600 },
-    { id: 'visit_methods', name: 'visit_* methods', type: 'visitor', group: 'visitor', loc: 400 },
-    { id: 'postgres_visitor', name: 'PostgreSQL::ToSql', type: 'visitor', group: 'adapters', loc: 300 },
-    { id: 'mysql_visitor', name: 'MySQL::ToSql', type: 'visitor', group: 'adapters', loc: 300 },
-    { id: 'sqlite_visitor', name: 'SQLite::ToSql', type: 'visitor', group: 'adapters', loc: 300 },
+    { id: 'visitor', name: 'Arel::Visitors::ToSql', type: 'visitor', group: 'visitor' },
+    { id: 'visit_methods', name: 'visit_* methods', type: 'visitor', group: 'visitor' },
+    { id: 'postgres_visitor', name: 'PostgreSQL::ToSql', type: 'visitor', group: 'adapters' },
+    { id: 'mysql_visitor', name: 'MySQL::ToSql', type: 'visitor', group: 'adapters' },
+    { id: 'sqlite_visitor', name: 'SQLite::ToSql', type: 'visitor', group: 'adapters' },
     
     // SQL & Execution Layer
-    { id: 'sql_string', name: 'Final SQL String', type: 'sql', group: 'sql', loc: 200 },
-    { id: 'statement_cache', name: 'StatementCache', type: 'sql', group: 'cache', loc: 350 },
-    { id: 'connection', name: 'ConnectionAdapter', type: 'sql', group: 'execution', loc: 400 },
-    { id: 'result', name: 'ActiveRecord::Result', type: 'result', group: 'result', loc: 450 }
+    { id: 'sql_string', name: 'Final SQL String', type: 'sql', group: 'sql' },
+    { id: 'statement_cache', name: 'StatementCache', type: 'sql', group: 'cache' },
+    { id: 'connection', name: 'ConnectionAdapter', type: 'sql', group: 'execution' },
+    { id: 'result', name: 'ActiveRecord::Result', type: 'result', group: 'result' }
   ];
 
   const links = [
