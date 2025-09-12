@@ -1,15 +1,26 @@
 import React from 'react';
 import './PageNavigation.css';
 
-function PageNavigation({ currentPage, totalPages, onPageChange }) {
+function PageNavigation({ currentPage, totalPages, onPageChange, subFlows }) {
   const handlePrevious = () => {
-    if (currentPage > 1) {
+    // If we're on page 1 with subflows, handle subflow navigation
+    if (subFlows && subFlows.visible > 1) {
+      subFlows.onSubFlowChange(subFlows.visible - 1);
+    } else if (currentPage > 1) {
       onPageChange(currentPage - 1);
     }
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) {
+    // If we're on page 1 with subflows, handle subflow navigation
+    if (subFlows) {
+      if (subFlows.visible < subFlows.total) {
+        subFlows.onSubFlowChange(subFlows.visible + 1);
+      } else {
+        // All subflows visible, move to next page
+        onPageChange(currentPage + 1);
+      }
+    } else if (currentPage < totalPages) {
       onPageChange(currentPage + 1);
     }
   };
@@ -23,7 +34,7 @@ function PageNavigation({ currentPage, totalPages, onPageChange }) {
       <button 
         className="nav-arrow prev"
         onClick={handlePrevious}
-        disabled={currentPage === 1}
+        disabled={currentPage === 1 && (!subFlows || subFlows.visible === 1)}
         aria-label="Previous page"
       >
         ←
@@ -44,13 +55,19 @@ function PageNavigation({ currentPage, totalPages, onPageChange }) {
       </div>
 
       <div className="page-counter">
-        {currentPage} / {totalPages}
+        {subFlows ? (
+          <>
+            Page {currentPage}: {subFlows.visible}/{subFlows.total} flows
+          </>
+        ) : (
+          <>{currentPage} / {totalPages}</>
+        )}
       </div>
 
       <button 
         className="nav-arrow next"
         onClick={handleNext}
-        disabled={currentPage === totalPages}
+        disabled={currentPage === totalPages && !subFlows}
         aria-label="Next page"
       >
         →

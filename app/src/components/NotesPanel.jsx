@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getHttpRequestFlowNotes } from './httpRequestFlowNotes';
 import './NotesPanel.css';
 
 const pageNotes = {
@@ -389,8 +390,14 @@ const pageNotes = {
   }
 };
 
-function NotesPanel({ currentPage, isExpanded, onToggle }) {
-  const notes = pageNotes[currentPage] || { title: "Notes", content: "No notes available for this page." };
+function NotesPanel({ currentPage, isExpanded, onToggle, viewType = 'activerecord-flow', visibleSubFlows = null }) {
+  let notes;
+  
+  if (viewType === 'request-flow') {
+    notes = getHttpRequestFlowNotes(currentPage, visibleSubFlows);
+  } else {
+    notes = pageNotes[currentPage] || { title: "Notes", content: "No notes available for this page." };
+  }
 
   const renderMarkdown = (text) => {
     // Process text line by line for markdown rendering

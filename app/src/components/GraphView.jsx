@@ -10,6 +10,17 @@ import {
   generateIncludesD3Data,
   generateSQLPipelineD3Data
 } from './activeRecordFlowsD3';
+import {
+  generateBeforeRailsFlowsD3Data,
+  generateRouteDirectResponseD3Data,
+  generateMiddlewareResponseD3Data,
+  generateControllerTextResponseD3Data,
+  generateControllerViewD3Data,
+  generateControllerModelViewD3Data,
+  generateComplexMultiModelD3Data,
+  generateAPIJsonResponseD3Data,
+  generateStreamingResponseD3Data
+} from './httpRequestFlowsD3';
 import './GraphView.css';
 
 function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule }) {
@@ -17,43 +28,84 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
   const containerRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [notesExpanded, setNotesExpanded] = useState(false);
-  const totalPages = 6;
+  const [visibleSubFlows, setVisibleSubFlows] = useState(1); // For progressive reveal on page 1 of request-flow
+  const totalPages = currentView === 'activerecord-flow' ? 6 : currentView === 'request-flow' ? 9 : 1;
   
   // Page titles for activerecord-flow
-  const pageTitles = {
+  const pageTitles = currentView === 'activerecord-flow' ? {
     1: "Core Components Overview",
     2: "Lazy Query Initialization", 
     3: "Simple Query Execution",
     4: "Query with Joins",
     5: "Complex Query with Includes",
     6: "SQL Generation Pipeline"
-  };
+  } : currentView === 'request-flow' ? {
+    1: "Before Hitting Rails",
+    2: "Route Direct Response",
+    3: "Middleware Response",
+    4: "Controller Text Response",
+    5: "Controller with View",
+    6: "Controller with Model and View",
+    7: "Complex Multi-Model Request",
+    8: "API JSON Response",
+    9: "Streaming Response"
+  } : {};
 
-  // Handle keyboard navigation for activerecord-flow pages
+  // Handle keyboard navigation for flow pages
   useEffect(() => {
-    if (currentView !== 'activerecord-flow') return;
+    if (currentView !== 'activerecord-flow' && currentView !== 'request-flow') return;
 
     const handleKeyPress = (e) => {
+      // Special handling for page 1 of request-flow (progressive reveal)
+      if (currentView === 'request-flow' && currentPage === 1) {
+        if (e.key === 'ArrowRight') {
+          if (visibleSubFlows < 6) {
+            setVisibleSubFlows(visibleSubFlows + 1);
+            return;
+          } else {
+            // Move to page 2 when all subflows are visible
+            setCurrentPage(2);
+            return;
+          }
+        } else if (e.key === 'ArrowLeft' && visibleSubFlows > 1) {
+          setVisibleSubFlows(visibleSubFlows - 1);
+          return;
+        }
+      }
+      
+      // Normal page navigation
       if (e.key === 'ArrowLeft' && currentPage > 1) {
-        setCurrentPage(currentPage - 1);
+        if (currentView === 'request-flow' && currentPage === 2) {
+          // Going back to page 1, reset to show all subflows
+          setCurrentPage(1);
+          setVisibleSubFlows(6);
+        } else {
+          setCurrentPage(currentPage - 1);
+        }
       } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
         setCurrentPage(currentPage + 1);
-      } else if (e.key >= '1' && e.key <= '6') {
+      } else if (e.key >= '1' && e.key <= '9') {
         const page = parseInt(e.key);
         if (page <= totalPages) {
           setCurrentPage(page);
+          if (currentView === 'request-flow' && page === 1) {
+            setVisibleSubFlows(1); // Reset to show only first flow when jumping to page 1
+          }
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [currentView, currentPage, totalPages]);
+  }, [currentView, currentPage, totalPages, visibleSubFlows]);
 
-  // Reset page when entering activerecord-flow
+  // Reset page when entering flow views
   useEffect(() => {
-    if (currentView === 'activerecord-flow') {
+    if (currentView === 'activerecord-flow' || currentView === 'request-flow') {
       setCurrentPage(1);
+      if (currentView === 'request-flow') {
+        setVisibleSubFlows(1); // Start with only first flow visible
+      }
     }
   }, [currentView]);
 
@@ -66,7 +118,7 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
     const width = container.clientWidth;
     let height = container.clientHeight;
     
-    // For activerecord-flow, calculate height based on number of nodes
+    // For flow views, calculate height based on number of nodes
     if (currentView === 'activerecord-flow') {
       // Get the node count for current page
       let nodeCount = 0;
@@ -94,19 +146,97 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
     
     // Check for special view modes first
     if (currentView === 'request-flow') {
-      // Request Flow visualization
-      const flow = data.requestFlow;
-      nodes = flow.steps.map(step => ({
-        ...step,
-        x: width / 2,
-        y: 0
-      }));
-      
-      links = flow.connections.map(conn => ({
-        source: conn.from,
-        target: conn.to,
-        bidirectional: conn.bidirectional
-      }));
+      // Request Flow visualization with pages
+      if (currentPage === 1) {
+        // Page 1: Before Hitting Rails - Progressive reveal of horizontal flows
+        const allFlows = generateBeforeRailsFlowsD3Data();
+        const flowsToShow = allFlows.slice(0, visibleSubFlows);
+        
+        // Combine all visible flows into single node/link arrays
+        nodes = [];
+        links = [];
+        
+        flowsToShow.forEach((flow, flowIndex) => {
+          const yOffset = flowIndex * 250; // 250px vertical spacing between flows for better separation
+          
+          // Add a title node for each flow
+          nodes.push({
+            id: `${flow.id}-title`,
+            name: flow.title,
+            type: 'flow-title',
+            flowId: flow.id,
+            flowIndex: flowIndex,
+            x: 100,
+            y: 80 + yOffset,
+            fx: 100,
+            fy: 80 + yOffset,
+            isTitle: true
+          });
+          
+          // Position nodes horizontally for each flow
+          flow.nodes.forEach((node, nodeIndex) => {
+            nodes.push({
+              ...node,
+              flowId: flow.id,
+              flowIndex: flowIndex,
+              x: 200 + (nodeIndex * 160), // Horizontal spacing
+              y: 120 + yOffset, // Vertical position
+              fx: 200 + (nodeIndex * 160), // Fixed positions for horizontal layout
+              fy: 120 + yOffset
+            });
+          });
+          
+          // Add links for this flow
+          flow.links.forEach(link => {
+            links.push({
+              ...link,
+              flowId: flow.id
+            });
+          });
+        });
+        
+        // Adjust height based on visible flows
+        height = Math.max(container.clientHeight, 200 + (visibleSubFlows * 250));
+        svg.attr('height', height);
+      } else {
+        // Pages 2-9: Rails internal flows
+        let flowData;
+        switch(currentPage) {
+          case 2:
+            flowData = generateRouteDirectResponseD3Data();
+            break;
+          case 3:
+            flowData = generateMiddlewareResponseD3Data();
+            break;
+          case 4:
+            flowData = generateControllerTextResponseD3Data();
+            break;
+          case 5:
+            flowData = generateControllerViewD3Data();
+            break;
+          case 6:
+            flowData = generateControllerModelViewD3Data();
+            break;
+          case 7:
+            flowData = generateComplexMultiModelD3Data();
+            break;
+          case 8:
+            flowData = generateAPIJsonResponseD3Data();
+            break;
+          case 9:
+            flowData = generateStreamingResponseD3Data();
+            break;
+          default:
+            flowData = generateRouteDirectResponseD3Data();
+        }
+        nodes = flowData.nodes;
+        links = flowData.links;
+        
+        // Now that nodes are populated, adjust height for pages 2-9
+        const nodeSpacing = 80;
+        height = Math.max(container.clientHeight, nodeSpacing * (nodes.length + 2));
+        svg.attr('height', height);
+      }
     } else if (currentView === 'activerecord-flow') {
       // ActiveRecord Flow visualization with pages
       let flowData;
@@ -262,12 +392,34 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
     node.each(function(d) {
       const selection = d3.select(this);
       
+      // Special rendering for flow titles on request-flow page 1
+      if (currentView === 'request-flow' && currentPage === 1 && d.isTitle) {
+        // Render flow title as text only
+        selection.append("text")
+          .text(d.name)
+          .attr("text-anchor", "start")
+          .attr("dy", ".35em")
+          .style("font-size", "16px")
+          .style("font-weight", "bold")
+          .style("fill", "#333");
+        return;
+      }
+      
       // Special rendering for flow diagrams
       if (currentView === 'request-flow' || currentView === 'activerecord-flow' || currentView === 'boot-process') {
-        // Color based on type
+        // Color based on type and group
         const typeColors = {
+          // Request flow specific
           client: '#4CAF50',
+          network: '#2196F3',
           server: '#2196F3',
+          storage: '#795548',
+          cache: '#FF9800',
+          security: '#F44336',
+          error: '#D32F2F',
+          webserver: '#607D8B',
+          // ActiveRecord flow
+          entry: '#4CAF50',
           middleware: '#FF9800',
           routing: '#9C27B0',
           controller: '#F44336',
@@ -279,6 +431,8 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
           pool: '#607D8B',
           database: '#3F51B5',
           result: '#009688',
+          process: '#FFC107',
+          // Other
           script: '#FFC107',
           config: '#9E9E9E',
           core: '#E91E63',
@@ -286,15 +440,18 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
           ready: '#4CAF50'
         };
         
-        const nodeColor = typeColors[d.type] || '#757575';
+        const nodeColor = d.faded ? '#CCCCCC' : (typeColors[d.type] || typeColors[d.group] || '#757575');
         
         // Render as rounded rectangle
-        // Adjust width based on content length for activerecord-flow
-        let nodeWidth = 120;
+        // Adjust width based on content length
+        let nodeWidth = 140;
         if (currentView === 'activerecord-flow') {
           if (d.name.length > 30) nodeWidth = 200;
           else if (d.name.length > 20) nodeWidth = 160;
           else if (d.name.length > 15) nodeWidth = 140;
+        } else if (currentView === 'request-flow' && currentPage === 1) {
+          // Smaller nodes for horizontal flows
+          nodeWidth = d.name.length > 15 ? 140 : 120;
         }
         selection.append("rect")
           .attr("x", -nodeWidth/2)
@@ -412,6 +569,12 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
             .style("font-size", fontSize)
             .style("font-weight", "600");
           // No description for activerecord-flow to keep it clean
+        } else if (currentView === 'request-flow' && currentPage === 1) {
+          // For horizontal flows on page 1, simpler text
+          textElement.text(d.name)
+            .attr("dy", "0.35em")
+            .style("font-size", "11px")
+            .style("font-weight", "500");
         } else {
           // For other flow diagrams, show name and description
           textElement.text(d.name)
@@ -569,7 +732,25 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
     });
 
     // Apply layout based on type
-    if (currentView === 'request-flow' || currentView === 'activerecord-flow' || currentView === 'boot-process') {
+    if (currentView === 'request-flow') {
+      if (currentPage === 1) {
+        // Page 1 has horizontal layouts, positions already set
+        setTimeout(() => simulation.stop(), 100);
+      } else {
+        // Pages 2-9: vertical flow layout
+        setTimeout(() => {
+          const spacing = 80;
+          nodes.forEach((node, index) => {
+            if (!node.fx && !node.fy) { // Only position if not already fixed
+              node.fx = width / 2;
+              node.fy = spacing * (index + 1);
+            }
+          });
+          simulation.alpha(0.3).restart();
+          setTimeout(() => simulation.stop(), 1000);
+        }, 100);
+      }
+    } else if (currentView === 'activerecord-flow' || currentView === 'boot-process') {
       // Flow diagram layout - vertical flow
       setTimeout(() => {
         // Use fixed spacing for activerecord-flow, dynamic for others
@@ -696,19 +877,34 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
     return () => {
       simulation.stop();
     };
-  }, [data, currentView, selectedNode, onNodeClick, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule, currentPage]);
+  }, [data, currentView, selectedNode, onNodeClick, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule, currentPage, visibleSubFlows]);
 
   return (
     <div ref={containerRef} className="graph-container">
       <svg ref={svgRef} className="graph-svg"></svg>
       {currentView === 'request-flow' && (
-        <div className="gem-view-hint">
-          <strong>Rails Request Flow</strong>
-          <br />
-          <small>How an HTTP request flows through Rails</small>
-          <br />
-          <small>Press <kbd>ESC</kbd> or <kbd>1</kbd> to return to overview</small>
-        </div>
+        <>
+          <div className="gem-view-hint">
+            <strong>HTTP Request Flow</strong>
+            <br />
+            <small>{pageTitles[currentPage]}</small>
+            <br />
+            <small>Press <kbd>ESC</kbd> to return to overview</small>
+          </div>
+          {currentPage === 1 && (
+            <div className="subflow-counter">
+              Showing {visibleSubFlows} of 6 flows
+              {visibleSubFlows < 6 && (
+                <span style={{marginLeft: '10px', opacity: 0.7}}>
+                  Press <kbd>→</kbd> to reveal more
+                </span>
+              )}
+            </div>
+          )}
+          <div className="page-title">
+            <h2>{pageTitles[currentPage]}</h2>
+          </div>
+        </>
       )}
       {currentView === 'activerecord-flow' && (
         <>
@@ -753,17 +949,29 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
         </div>
       )}
       
-      {currentView === 'activerecord-flow' && (
+      {(currentView === 'activerecord-flow' || currentView === 'request-flow') && (
         <>
           <PageNavigation 
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              if (currentView === 'request-flow' && page === 1) {
+                setVisibleSubFlows(1); // Reset to first flow when navigating to page 1
+              }
+            }}
+            subFlows={currentView === 'request-flow' && currentPage === 1 ? {
+              visible: visibleSubFlows,
+              total: 6,
+              onSubFlowChange: setVisibleSubFlows
+            } : null}
           />
           <NotesPanel 
             currentPage={currentPage}
             isExpanded={notesExpanded}
             onToggle={() => setNotesExpanded(!notesExpanded)}
+            viewType={currentView}
+            visibleSubFlows={currentView === 'request-flow' && currentPage === 1 ? visibleSubFlows : null}
           />
         </>
       )}
