@@ -1,10 +1,51 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
+import PageNavigation from './PageNavigation';
+import NotesPanel from './NotesPanel';
+import {
+  generateCoreComponentsD3Data,
+  generateLazyInitD3Data,
+  generateSimpleExecutionD3Data,
+  generateJoinsD3Data,
+  generateIncludesD3Data,
+  generateSQLPipelineD3Data
+} from './activeRecordFlowsD3';
 import './GraphView.css';
 
 function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule }) {
   const svgRef = useRef(null);
   const containerRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [notesExpanded, setNotesExpanded] = useState(false);
+  const totalPages = 6;
+
+  // Handle keyboard navigation for activerecord-flow pages
+  useEffect(() => {
+    if (currentView !== 'activerecord-flow') return;
+
+    const handleKeyPress = (e) => {
+      if (e.key === 'ArrowLeft' && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
+        setCurrentPage(currentPage + 1);
+      } else if (e.key >= '1' && e.key <= '6') {
+        const page = parseInt(e.key);
+        if (page <= totalPages) {
+          setCurrentPage(page);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [currentView, currentPage, totalPages]);
+
+  // Reset page when entering activerecord-flow
+  useEffect(() => {
+    if (currentView === 'activerecord-flow') {
+      setCurrentPage(1);
+    }
+  }, [currentView]);
 
   useEffect(() => {
     if (!data) return;
@@ -39,19 +80,32 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
         bidirectional: conn.bidirectional
       }));
     } else if (currentView === 'activerecord-flow') {
-      // ActiveRecord Flow visualization  
-      const flow = data.activeRecordFlow;
-      nodes = flow.steps.map(step => ({
-        ...step,
-        x: width / 2,
-        y: 0
-      }));
-      
-      links = flow.connections.map(conn => ({
-        source: conn.from,
-        target: conn.to,
-        bidirectional: conn.bidirectional
-      }));
+      // ActiveRecord Flow visualization with pages
+      let flowData;
+      switch(currentPage) {
+        case 1:
+          flowData = generateCoreComponentsD3Data();
+          break;
+        case 2:
+          flowData = generateLazyInitD3Data();
+          break;
+        case 3:
+          flowData = generateSimpleExecutionD3Data();
+          break;
+        case 4:
+          flowData = generateJoinsD3Data();
+          break;
+        case 5:
+          flowData = generateIncludesD3Data();
+          break;
+        case 6:
+          flowData = generateSQLPipelineD3Data();
+          break;
+        default:
+          flowData = generateCoreComponentsD3Data();
+      }
+      nodes = flowData.nodes;
+      links = flowData.links;
     } else if (currentView === 'boot-process') {
       // Boot Process visualization
       const flow = data.bootProcess;
@@ -590,7 +644,7 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
     return () => {
       simulation.stop();
     };
-  }, [data, currentView, selectedNode, onNodeClick, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule]);
+  }, [data, currentView, selectedNode, onNodeClick, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule, currentPage]);
 
   return (
     <div ref={containerRef} className="graph-container">
@@ -640,6 +694,21 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
             </>
           )}
         </div>
+      )}
+      
+      {currentView === 'activerecord-flow' && (
+        <>
+          <PageNavigation 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+          <NotesPanel 
+            currentPage={currentPage}
+            isExpanded={notesExpanded}
+            onToggle={() => setNotesExpanded(!notesExpanded)}
+          />
+        </>
       )}
     </div>
   );

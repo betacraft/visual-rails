@@ -1,5 +1,15 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mermaid from 'mermaid';
+import PageNavigation from './PageNavigation';
+import NotesPanel from './NotesPanel';
+import {
+  generateCoreComponentsDiagram,
+  generateLazyInitDiagram,
+  generateSimpleExecutionDiagram,
+  generateJoinsDiagram,
+  generateIncludesDiagram,
+  generateSQLPipelineDiagram
+} from './activeRecordFlows';
 import './MermaidView.css';
 
 function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveSupport, viewType, showMetrics, focusedGem, focusedModule }) {
@@ -13,6 +23,9 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
   const [isRendering, setIsRendering] = useState(false);
   const fitToScreenTimeoutRef = useRef(null);
   const renderTimeoutRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [notesExpanded, setNotesExpanded] = useState(false);
+  const totalPages = 6;
 
   useEffect(() => {
     console.log('Initializing Mermaid...');
@@ -23,7 +36,7 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
         flowchart: {
           curve: 'basis',
           nodeSpacing: 80,
-          rankSpacing: 150,
+          rankSpacing: 100,
           padding: 20,
           useMaxWidth: false,
           htmlLabels: true,
@@ -36,7 +49,7 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
           lineColor: '#757575',
           secondaryColor: '#4CAF50',
           tertiaryColor: '#FF9800',
-          fontSize: '16px'
+          fontSize: '14px'
         },
         logLevel: 'error', // Changed from 'debug' to reduce console noise
         securityLevel: 'loose', // Allow more flexibility in rendering
@@ -47,6 +60,34 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
       console.error('Failed to initialize Mermaid:', error);
     }
   }, []);
+
+  // Handle keyboard navigation for activerecord-flow pages
+  useEffect(() => {
+    if (currentView !== 'activerecord-flow') return;
+
+    const handleKeyPress = (e) => {
+      if (e.key === 'ArrowLeft' && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
+        setCurrentPage(currentPage + 1);
+      } else if (e.key >= '1' && e.key <= '6') {
+        const page = parseInt(e.key);
+        if (page <= totalPages) {
+          setCurrentPage(page);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [currentView, currentPage, totalPages]);
+
+  // Reset page when entering activerecord-flow
+  useEffect(() => {
+    if (currentView === 'activerecord-flow') {
+      setCurrentPage(1);
+    }
+  }, [currentView]);
 
   useEffect(() => {
     if (!data) {
@@ -59,7 +100,31 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
     console.log('Generating diagram - viewType:', viewType, 'currentView:', currentView);
     
     // Special views override the viewType
-    if (currentView === 'request-flow' || currentView === 'activerecord-flow' || currentView === 'boot-process') {
+    if (currentView === 'activerecord-flow') {
+      // Generate page-specific diagram for ActiveRecord flow
+      switch(currentPage) {
+        case 1:
+          code = generateCoreComponentsDiagram();
+          break;
+        case 2:
+          code = generateLazyInitDiagram();
+          break;
+        case 3:
+          code = generateSimpleExecutionDiagram();
+          break;
+        case 4:
+          code = generateJoinsDiagram();
+          break;
+        case 5:
+          code = generateIncludesDiagram();
+          break;
+        case 6:
+          code = generateSQLPipelineDiagram();
+          break;
+        default:
+          code = generateCoreComponentsDiagram();
+      }
+    } else if (currentView === 'request-flow' || currentView === 'boot-process') {
       code = generateSequenceDiagram(data, currentView);
     } else if (focusedModule) {
       // When viewing a module's components, show architecture
@@ -75,7 +140,7 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
 
     console.log('Generated code length:', code.length);
     setMermaidCode(code);
-  }, [data, currentView, viewType, hideActiveSupport, showMetrics, focusedGem, focusedModule]);
+  }, [data, currentView, viewType, hideActiveSupport, showMetrics, focusedGem, focusedModule, currentPage]);
 
   useEffect(() => {
     console.log('MermaidCode updated, length:', mermaidCode?.length);
@@ -283,6 +348,7 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
         }
         return;
       }
+      
       
       // Get the actual SVG dimensions - use safer methods
       let svgWidth, svgHeight;
@@ -709,6 +775,21 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveS
       <div className="mermaid-hint">
         Use Ctrl+Scroll to zoom • Drag to pan
       </div>
+
+      {currentView === 'activerecord-flow' && (
+        <>
+          <PageNavigation 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+          <NotesPanel 
+            currentPage={currentPage}
+            isExpanded={notesExpanded}
+            onToggle={() => setNotesExpanded(!notesExpanded)}
+          />
+        </>
+      )}
     </div>
   );
 }
