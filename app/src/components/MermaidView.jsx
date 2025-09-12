@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import mermaid from 'mermaid';
 import './MermaidView.css';
 
-function MermaidView({ data, currentView, onNodeClick, selectedNode, searchTerm, hideActiveSupport, viewType, showMetrics, focusedGem, focusedModule }) {
+function MermaidView({ data, currentView, onNodeClick, selectedNode, hideActiveSupport, viewType, showMetrics, focusedGem, focusedModule }) {
   const containerRef = useRef(null);
   const diagramRef = useRef(null);
   const [mermaidCode, setMermaidCode] = useState('');
@@ -174,10 +174,6 @@ function MermaidView({ data, currentView, onNodeClick, selectedNode, searchTerm,
       
       if (selectedNode && selectedNode.id === nodeId) {
         node.classList.add('selected');
-      }
-      
-      if (searchTerm && nodeId.toLowerCase().includes(searchTerm.toLowerCase())) {
-        node.classList.add('highlighted');
       }
     });
   };

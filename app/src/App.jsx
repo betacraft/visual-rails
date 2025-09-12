@@ -3,7 +3,6 @@ import GraphView from './components/GraphView';
 import MermaidView from './components/MermaidView';
 import InfoPanel from './components/InfoPanel';
 import Breadcrumb from './components/Breadcrumb';
-import SearchBar from './components/SearchBar';
 import railsData from '../data/rails_structure.json';
 import './App.css';
 
@@ -13,7 +12,6 @@ function App() {
   const [navigationPath, setNavigationPath] = useState(['Visual Rails']);
   const [focusedGem, setFocusedGem] = useState(null);
   const [focusedModule, setFocusedModule] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [presentationMode, setPresentationMode] = useState(false);
   const [hideActiveSupport, setHideActiveSupport] = useState(false);
   const [d3LayoutType, setD3LayoutType] = useState('force');
@@ -200,12 +198,6 @@ function App() {
           <header className="app-header">
             <div className="header-content">
               <h1>Visual Rails</h1>
-              <SearchBar 
-                value={searchTerm} 
-                onChange={setSearchTerm}
-                onSelect={handleNodeClick}
-                data={railsData}
-              />
             </div>
             <Breadcrumb 
               path={navigationPath} 
@@ -264,25 +256,29 @@ function App() {
               </div>
             )}
             
-            <div className="control-group">
-              <button 
-                className={`toggle-button ${hideActiveSupport ? 'active' : ''}`}
-                onClick={() => setHideActiveSupport(!hideActiveSupport)}
-                title="Hide ActiveSupport connections to simplify the view"
-              >
-                {hideActiveSupport ? '👁️' : '🚫'} ActiveSupport
-              </button>
-            </div>
-            
-            <div className="control-group">
-              <button 
-                className={`toggle-button ${showMetrics ? 'active' : ''}`}
-                onClick={() => setShowMetrics(!showMetrics)}
-                title="Toggle lines of code display"
-              >
-                📊 Metrics
-              </button>
-            </div>
+            {graphStyle === 'd3' && (
+              <>
+                <div className="control-group">
+                  <button 
+                    className={`toggle-button ${hideActiveSupport ? 'active' : ''}`}
+                    onClick={() => setHideActiveSupport(!hideActiveSupport)}
+                    title="Hide ActiveSupport connections to simplify the view"
+                  >
+                    {hideActiveSupport ? '👁️' : '🚫'} ActiveSupport
+                  </button>
+                </div>
+                
+                <div className="control-group">
+                  <button 
+                    className={`toggle-button ${showMetrics ? 'active' : ''}`}
+                    onClick={() => setShowMetrics(!showMetrics)}
+                    title="Toggle lines of code display"
+                  >
+                    📊 Metrics
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </>
       )}
@@ -294,7 +290,6 @@ function App() {
             currentView={currentView}
             onNodeClick={handleNodeClick}
             selectedNode={selectedNode}
-            searchTerm={searchTerm}
             hideActiveSupport={hideActiveSupport}
             layoutType={d3LayoutType}
             showMetrics={showMetrics}
@@ -307,7 +302,6 @@ function App() {
             currentView={currentView}
             onNodeClick={handleNodeClick}
             selectedNode={selectedNode}
-            searchTerm={searchTerm}
             hideActiveSupport={hideActiveSupport}
             viewType={mermaidViewType}
             showMetrics={showMetrics}

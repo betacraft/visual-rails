@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 import './GraphView.css';
 
-function GraphView({ data, currentView, onNodeClick, selectedNode, searchTerm, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule }) {
+function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule }) {
   const svgRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -171,7 +171,7 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, searchTerm, h
       .selectAll("g")
       .data(nodes)
       .enter().append("g")
-      .attr("class", d => `node ${selectedNode?.id === d.id ? 'selected' : ''} ${searchTerm && d.name.toLowerCase().includes(searchTerm.toLowerCase()) ? 'highlighted' : ''}`)
+      .attr("class", d => `node ${selectedNode?.id === d.id ? 'selected' : ''}`)
       .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
@@ -590,7 +590,7 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, searchTerm, h
     return () => {
       simulation.stop();
     };
-  }, [data, currentView, selectedNode, searchTerm, onNodeClick, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule]);
+  }, [data, currentView, selectedNode, onNodeClick, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule]);
 
   return (
     <div ref={containerRef} className="graph-container">
