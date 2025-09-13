@@ -4,7 +4,7 @@ import MermaidView from './components/MermaidView';
 import InfoPanel from './components/InfoPanel';
 import Breadcrumb from './components/Breadcrumb';
 import Sidebar from './components/Sidebar';
-import railsData from '../data/rails_structure.json';
+import railsData from '../data/rails_structure_real.json';
 import './App.css';
 
 function App() {

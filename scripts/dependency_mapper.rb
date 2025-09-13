@@ -10,8 +10,8 @@ class DependencyMapper
     dependencies = []
     content = File.read(gemspec_path)
     
-    # Parse runtime dependencies
-    content.scan(/\.add_dependency\s*\(\s*["']([^"']+)["']/) do |match|
+    # Parse runtime dependencies (format: s.add_dependency "name", version)
+    content.scan(/s\.add_dependency\s+["']([^"']+)["']/) do |match|
       dep_name = match[0]
       # Only include Rails gems and common dependencies
       if rails_gem?(dep_name) || common_dependency?(dep_name)
@@ -19,8 +19,8 @@ class DependencyMapper
       end
     end
     
-    # Also check for add_runtime_dependency
-    content.scan(/\.add_runtime_dependency\s*\(\s*["']([^"']+)["']/) do |match|
+    # Also check for add_runtime_dependency (less common but might exist)
+    content.scan(/s\.add_runtime_dependency\s+["']([^"']+)["']/) do |match|
       dep_name = match[0]
       if rails_gem?(dep_name) || common_dependency?(dep_name)
         dependencies << dep_name
@@ -40,8 +40,8 @@ class DependencyMapper
     dev_dependencies = []
     content = File.read(gemspec_path)
     
-    # Parse development dependencies
-    content.scan(/\.add_development_dependency\s*\(\s*["']([^"']+)["']/) do |match|
+    # Parse development dependencies (format: s.add_development_dependency "name", version)
+    content.scan(/s\.add_development_dependency\s+["']([^"']+)["']/) do |match|
       dev_dependencies << match[0]
     end
     

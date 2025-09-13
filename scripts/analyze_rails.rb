@@ -114,11 +114,19 @@ class RailsAnalyzer
           color: get_gem_color(gem_name)
         }
         
-        # Add module details for key modules
+        # Add module details for ALL modules (or limit to top modules for performance)
         if gem_data[:modules].any?
           gem_data[:moduleDetails] = {}
-          gem_data[:modules].take(5).each do |module_name|
-            gem_data[:moduleDetails][module_name] = @module_parser.get_module_details(gem_path, module_name)
+          # Process more modules but set a reasonable limit to avoid huge files
+          modules_to_process = gem_data[:modules].take(20) # Increased from 5 to 20
+          
+          modules_to_process.each do |module_name|
+            print "."
+            details = @module_parser.get_module_details(gem_path, module_name)
+            # Only include modules that have methods or important components
+            if details[:methods].any? || details[:class_methods].any? || details[:components].any?
+              gem_data[:moduleDetails][module_name] = details
+            end
           end
         end
         
@@ -187,8 +195,8 @@ class RailsAnalyzer
         # Only include dependencies to other Rails gems
         if RAILS_GEMS.include?(dep) || dep == 'rails'
           dependencies << {
-            source: dep,
-            target: gem[:id],
+            source: gem[:id],  # gem depends on dep
+            target: dep,       # so arrow goes from gem to dep
             strength: calculate_dependency_strength(dep, gem[:id])
           }
         end

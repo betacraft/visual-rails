@@ -1,6 +1,6 @@
 {
   "version": "8.0.0",
-  "generated_at": "2025-09-10",
+  "generated_at": "2025-09-13",
   "generated_by": "script",
   "gems": [
     {
@@ -67,20 +67,14 @@
         "ActionCable::Worker"
       ],
       "dependencies": [
-
+        "activesupport",
+        "actionpack",
+        "nio4r",
+        "websocket-driver",
+        "zeitwerk"
       ],
       "color": "#00BCD4",
       "moduleDetails": {
-        "ActionCable": {
-          "description": "ActionCable module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 80
-        },
         "ActionCable::ActionCableHelper": {
           "description": "ActionCableHelper module",
           "components": [
@@ -88,6 +82,9 @@
           ],
           "methods": [
             "action_cable_meta_tag"
+          ],
+          "class_methods": [
+
           ],
           "loc": 45
         },
@@ -99,17 +96,10 @@
           "methods": [
             "with_database_connections"
           ],
+          "class_methods": [
+
+          ],
           "loc": 23
-        },
-        "ActionCable::Assertions": {
-          "description": "Assertions module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "ActionCable::Authorization": {
           "description": "Authorization module",
@@ -119,7 +109,218 @@
           "methods": [
             "reject_unauthorized_connection"
           ],
+          "class_methods": [
+
+          ],
           "loc": 18
+        },
+        "ActionCable::Broadcasting": {
+          "description": "Broadcasting module",
+          "components": [
+
+          ],
+          "methods": [
+            "broadcast",
+            "broadcaster_for"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 62
+        },
+        "ActionCable::Callbacks": {
+          "description": "Callbacks module",
+          "components": [
+            "ActiveSupport::Concern",
+            "ActiveSupport::Callbacks"
+          ],
+          "methods": [
+            "after_command",
+            "around_command",
+            "before_command"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 57
+        },
+        "ActionCable::Channel": {
+          "description": "WebSocket channel implementation",
+          "components": [
+            "Callbacks",
+            "PeriodicTimers",
+            "Streams",
+            "Naming",
+            "Broadcasting",
+            "ActiveSupport::Rescuable",
+            "ActiveSupport::Concern",
+            "ActiveSupport::Callbacks"
+          ],
+          "methods": [
+            "after_subscribe",
+            "after_unsubscribe",
+            "before_subscribe",
+            "before_unsubscribe",
+            "broadcast_to",
+            "broadcasting_for",
+            "channel_name",
+            "confirmed?",
+            "initialize",
+            "rejected?",
+            "start_periodic_timers",
+            "stop_all_streams",
+            "stream_from",
+            "streams"
+          ],
+          "class_methods": [
+            "action_methods"
+          ],
+          "loc": 844
+        },
+        "ActionCable::ChannelPrefix": {
+          "description": "ChannelPrefix module",
+          "components": [
+
+          ],
+          "methods": [
+            "broadcast",
+            "subscribe",
+            "unsubscribe"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 30
+        },
+        "ActionCable::Connection": {
+          "description": "WebSocket connection handling",
+          "components": [
+            "Identification",
+            "InternalChannel",
+            "Authorization",
+            "Callbacks",
+            "ActiveSupport::Rescuable",
+            "ActiveSupport::Concern",
+            "ActiveSupport::Callbacks"
+          ],
+          "methods": [
+            "after_command",
+            "append",
+            "around_command",
+            "attach",
+            "beat",
+            "before_command",
+            "close",
+            "connection_identifier",
+            "detach",
+            "dispatch_websocket_message",
+            "handle_channel_command",
+            "identified_by",
+            "initialize",
+            "inspect",
+            "on_close",
+            "on_error",
+            "on_message",
+            "on_open",
+            "post",
+            "process",
+            "process!",
+            "processing?",
+            "receive",
+            "send_async",
+            "statistics",
+            "stop",
+            "timer",
+            "transmit",
+            "writes_pending"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 593
+        },
+        "ActionCable::Connections": {
+          "description": "Connections module",
+          "components": [
+
+          ],
+          "methods": [
+            "add_connection",
+            "connections",
+            "open_connections_statistics",
+            "remove_connection",
+            "setup_heartbeat_timer"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 44
+        },
+        "ActionCable::Helpers": {
+          "description": "Helpers module",
+          "components": [
+
+          ],
+          "methods": [
+            "action_cable_meta_tag"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 45
+        },
+        "ActionCable::Identification": {
+          "description": "Identification module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "connection_identifier",
+            "identified_by"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 49
+        },
+        "ActionCable::InternalChannel": {
+          "description": "InternalChannel module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 50
+        },
+        "ActionCable::Naming": {
+          "description": "Naming module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "channel_name"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 28
+        },
+        "ActionCable::PeriodicTimers": {
+          "description": "PeriodicTimers module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "periodically"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 78
         }
       }
     },
@@ -152,7 +353,12 @@
         "RoutingError"
       ],
       "dependencies": [
-
+        "activesupport",
+        "activerecord",
+        "activestorage",
+        "activejob",
+        "actionpack",
+        "mail"
       ],
       "color": "#9C27B0",
       "moduleDetails": {
@@ -164,6 +370,9 @@
           "methods": [
 
           ],
+          "class_methods": [
+
+          ],
           "loc": 26
         },
         "Callbacks": {
@@ -173,41 +382,29 @@
             "ActiveSupport::Callbacks"
           ],
           "methods": [
-            "before_processing",
             "after_processing",
-            "around_processing"
+            "around_processing",
+            "before_processing"
+          ],
+          "class_methods": [
+
           ],
           "loc": 36
         },
-        "Generators": {
-          "description": "Generators module",
+        "Routing": {
+          "description": "Routing module",
           "components": [
-
+            "ActiveSupport::Concern"
           ],
           "methods": [
+            "mailbox_for",
+            "route",
+            "routing"
+          ],
+          "class_methods": [
 
           ],
-          "loc": 0
-        },
-        "Mail": {
-          "description": "Mail module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
-        },
-        "Rails": {
-          "description": "Rails module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
+          "loc": 26
         }
       }
     },
@@ -249,7 +446,11 @@
         "ActionMailer::Railtie"
       ],
       "dependencies": [
-
+        "activesupport",
+        "actionpack",
+        "actionview",
+        "activejob",
+        "mail"
       ],
       "color": "#673AB7",
       "moduleDetails": {
@@ -259,19 +460,12 @@
 
           ],
           "methods": [
-            "self"
+
+          ],
+          "class_methods": [
+            "eager_load!"
           ],
           "loc": 79
-        },
-        "ActionMailer::Behavior": {
-          "description": "Behavior module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "ActionMailer::Callbacks": {
           "description": "Callbacks module",
@@ -280,21 +474,14 @@
             "ActiveSupport::Callbacks"
           ],
           "methods": [
-            "before_deliver",
             "after_deliver",
-            "around_deliver"
+            "around_deliver",
+            "before_deliver"
+          ],
+          "class_methods": [
+
           ],
           "loc": 31
-        },
-        "ActionMailer::ClassMethods": {
-          "description": "ClassMethods module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "ActionMailer::DeliveryMethods": {
           "description": "DeliveryMethods module",
@@ -306,7 +493,83 @@
             "wrap_delivery_behavior",
             "wrap_delivery_behavior!"
           ],
+          "class_methods": [
+
+          ],
           "loc": 83
+        },
+        "ActionMailer::FormBuilder": {
+          "description": "FormBuilder module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "default_form_builder"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 37
+        },
+        "ActionMailer::MailHelper": {
+          "description": "MailHelper module",
+          "components": [
+
+          ],
+          "methods": [
+            "attachments",
+            "block_format",
+            "format_paragraph",
+            "mailer",
+            "message"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 82
+        },
+        "ActionMailer::Parameterized": {
+          "description": "Parameterized module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "initialize",
+            "params",
+            "with"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 154
+        },
+        "ActionMailer::QueuedDelivery": {
+          "description": "QueuedDelivery module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 12
+        },
+        "ActionMailer::Rescuable": {
+          "description": "Rescuable module",
+          "components": [
+            "ActiveSupport::Concern",
+            "ActiveSupport::Rescuable"
+          ],
+          "methods": [
+            "handle_exception",
+            "handle_exceptions"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 33
         }
       }
     },
@@ -623,61 +886,263 @@
         "ActionPack::Visitor"
       ],
       "dependencies": [
-
+        "activesupport",
+        "nokogiri",
+        "rack",
+        "rack-test",
+        "actionview"
       ],
       "color": "#1976D2",
       "moduleDetails": {
-        "ActionPack": {
-          "description": "ActionPack module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 27
-        },
         "ActionPack::AbstractController": {
           "description": "AbstractController module",
           "components": [
-            "ActiveSupport::Autoload"
+            "ActiveSupport::Autoload",
+            "DidYouMean::Correctable",
+            "ActiveSupport::Configurable",
+            "ActiveSupport::DescendantsTracker",
+            "ActiveSupport::Concern",
+            "Resolution"
           ],
           "methods": [
-            "self"
+            "action_methods",
+            "all_helpers_from_path",
+            "available_action?",
+            "clear_action_methods!",
+            "clear_helpers",
+            "controller_path",
+            "corrections",
+            "eager_load!",
+            "helper",
+            "helper_method",
+            "helper_modules_from_paths",
+            "inherited",
+            "initialize",
+            "inspect",
+            "internal_methods",
+            "method_added",
+            "modules_for_helpers",
+            "performed?",
+            "process"
           ],
-          "loc": 36
+          "class_methods": [
+            "abstract!",
+            "deprecator",
+            "eager_load!",
+            "supports_path?"
+          ],
+          "loc": 589
         },
         "ActionPack::ActionController": {
           "description": "ActionController module",
           "components": [
-            "ActiveSupport::Autoload"
+            "ActiveSupport::Autoload",
+            "AbstractController::Rendering",
+            "AbstractController::Translation",
+            "AbstractController::AssetPaths",
+            "Helpers",
+            "UrlFor",
+            "Redirecting",
+            "ActionView::Layouts",
+            "Rendering",
+            "Renderers::All",
+            "ConditionalGet",
+            "EtagWithTemplateDigest",
+            "EtagWithFlash",
+            "Caching",
+            "MimeResponds",
+            "ImplicitRender",
+            "StrongParameters",
+            "ParameterEncoding",
+            "Cookies",
+            "Flash",
+            "FormBuilder",
+            "RequestForgeryProtection",
+            "ContentSecurityPolicy",
+            "PermissionsPolicy",
+            "RateLimiting",
+            "AllowBrowser",
+            "Streaming",
+            "DataStreaming",
+            "HttpAuthentication::Basic::ControllerMethods",
+            "HttpAuthentication::Digest::ControllerMethods",
+            "HttpAuthentication::Token::ControllerMethods",
+            "DefaultHeaders",
+            "Logging",
+            "AbstractController::Callbacks",
+            "Rescue",
+            "Instrumentation",
+            "ParamsWrapper"
           ],
           "methods": [
-
+            "build",
+            "initialize",
+            "valid?"
           ],
-          "loc": 80
+          "class_methods": [
+            "deprecator",
+            "without_modules"
+          ],
+          "loc": 760
         },
         "ActionPack::ActionDispatch": {
           "description": "ActionDispatch module",
           "components": [
             "ActiveSupport::Autoload",
-            "ActiveSupport::Autoload"
+            "Capybara::DSL",
+            "Capybara::Minitest::Assertions",
+            "SystemTesting::TestHelpers::SetupAndTeardown",
+            "SystemTesting::TestHelpers::ScreenshotHelper",
+            "ActionDispatch"
           ],
           "methods": [
-            "self",
-            "eager_load!"
+            "eager_load!",
+            "initialize"
           ],
-          "loc": 153
+          "class_methods": [
+            "deprecator",
+            "driven_by",
+            "resolve_store",
+            "served_by",
+            "start_application"
+          ],
+          "loc": 630
         },
-        "ActionPack::All": {
-          "description": "All module",
+        "ActionPack::AllowBrowser": {
+          "description": "AllowBrowser module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "allow_browser"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 133
+        },
+        "ActionPack::ApiRendering": {
+          "description": "ApiRendering module",
+          "components": [
+            "ActiveSupport::Concern",
+            "Rendering"
+          ],
+          "methods": [
+            "render_to_body"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 18
+        },
+        "ActionPack::Assertions": {
+          "description": "Assertions module",
+          "components": [
+            "ActiveSupport::Concern",
+            "ResponseAssertions",
+            "RoutingAssertions",
+            "Rails::Dom::Testing::Assertions"
+          ],
+          "methods": [
+            "assert_redirected_to",
+            "assert_response",
+            "html_document",
+            "with_routing"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 492
+        },
+        "ActionPack::AssetPaths": {
+          "description": "AssetPaths module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 14
+        },
+        "ActionPack::BasicImplicitRender": {
+          "description": "BasicImplicitRender module",
+          "components": [
+
+          ],
+          "methods": [
+            "default_render",
+            "send_action"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 17
+        },
+        "ActionPack::Cache": {
+          "description": "Cache module",
+          "components": [
+
+          ],
+          "methods": [
+            "date",
+            "date=",
+            "date?",
+            "etag=",
+            "etag?",
+            "etag_matches?",
+            "fresh?",
+            "if_modified_since",
+            "if_none_match",
+            "if_none_match_etags",
+            "last_modified",
+            "last_modified=",
+            "last_modified?",
+            "not_modified?",
+            "strong_etag=",
+            "strong_etag?",
+            "weak_etag=",
+            "weak_etag?"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 249
+        },
+        "ActionPack::Caching": {
+          "description": "Caching module",
+          "components": [
+            "ActiveSupport::Concern",
+            "AbstractController::Caching"
+          ],
+          "methods": [
+            "combined_fragment_cache_key",
+            "expire_fragment",
+            "fragment_cache_key",
+            "fragment_exist?",
+            "instrument_fragment_cache",
+            "read_fragment",
+            "write_fragment"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 198
+        },
+        "ActionPack::Collector": {
+          "description": "Collector module",
           "components": [
 
           ],
           "methods": [
 
           ],
-          "loc": 0
+          "class_methods": [
+            "generate_method_for_mime"
+          ],
+          "loc": 44
         }
       }
     },
@@ -718,20 +1183,24 @@
         "TrixAttachment"
       ],
       "dependencies": [
-
+        "activesupport",
+        "activerecord",
+        "activestorage",
+        "actionpack",
+        "nokogiri"
       ],
       "color": "#3F51B5",
       "moduleDetails": {
         "ActionText": {
           "description": "ActionText module",
           "components": [
-            "ActiveSupport::Autoload",
-            "ActiveSupport::Autoload",
             "ActiveSupport::Autoload"
           ],
           "methods": [
-            "html_document_class",
             "html_document_fragment_class"
+          ],
+          "class_methods": [
+            "html_document_class"
           ],
           "loc": 59
         },
@@ -741,38 +1210,12 @@
             "ActiveSupport::Concern"
           ],
           "methods": [
-            "from_node",
-            "from_attachable_sgid",
-            "attachable_from_sgid",
-            "from_attachable_sgid",
-            "to_missing_attachable_partial_path",
-            "attachable_sgid",
-            "attachable_content_type",
-            "attachable_filename",
-            "attachable_filesize",
-            "attachable_metadata"
+            "from_attachable_sgid"
+          ],
+          "class_methods": [
+            "from_node"
           ],
           "loc": 156
-        },
-        "Attachables": {
-          "description": "Attachables module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
-        },
-        "Attachments": {
-          "description": "Attachments module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "Attribute": {
           "description": "Attribute module",
@@ -781,10 +1224,125 @@
           ],
           "methods": [
             "has_rich_text",
-            "with_all_rich_text",
-            "rich_text_association_names"
+            "rich_text_association_names",
+            "with_all_rich_text"
+          ],
+          "class_methods": [
+
           ],
           "loc": 105
+        },
+        "Caching": {
+          "description": "Caching module",
+          "components": [
+
+          ],
+          "methods": [
+            "cache_key"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 18
+        },
+        "Encryption": {
+          "description": "Encryption module",
+          "components": [
+
+          ],
+          "methods": [
+            "decrypt",
+            "encrypt"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 40
+        },
+        "HtmlConversion": {
+          "description": "HtmlConversion module",
+          "components": [
+
+          ],
+          "methods": [
+            "create_element",
+            "fragment_for_html",
+            "node_to_html"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 26
+        },
+        "Minification": {
+          "description": "Minification module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "fragment_by_minifying_attachments"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 19
+        },
+        "PlainTextConversion": {
+          "description": "PlainTextConversion module",
+          "components": [
+
+          ],
+          "methods": [
+            "node_to_plain_text"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 119
+        },
+        "Rendering": {
+          "description": "Rendering module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "action_controller_renderer",
+            "render",
+            "with_renderer"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 35
+        },
+        "Serialization": {
+          "description": "Serialization module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "dump",
+            "load"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 38
+        },
+        "TrixConversion": {
+          "description": "TrixConversion module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "fragment_by_converting_trix_attachments",
+            "from_trix_attachment",
+            "to_trix_attachment"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 38
         }
       }
     },
@@ -974,7 +1532,9 @@
         "ActionView::WrongEncodingError"
       ],
       "dependencies": [
-
+        "activesupport",
+        "builder",
+        "erubi"
       ],
       "color": "#2196F3",
       "moduleDetails": {
@@ -984,39 +1544,23 @@
             "ActiveSupport::Autoload"
           ],
           "methods": [
-            "self"
+            "button_to",
+            "content_tag",
+            "div",
+            "form_for",
+            "form_with",
+            "image_tag",
+            "javascript_include_tag",
+            "link_to",
+            "render",
+            "span",
+            "stylesheet_link_tag",
+            "tag"
+          ],
+          "class_methods": [
+            "eager_load!"
           ],
           "loc": 104
-        },
-        "ActionView::Accessors": {
-          "description": "Accessors module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
-        },
-        "ActionView::ActiveModelHelper": {
-          "description": "ActiveModelHelper module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 54
-        },
-        "ActionView::ActiveModelInstanceTag": {
-          "description": "ActiveModelInstanceTag module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "ActionView::AssetTagHelper": {
           "description": "AssetTagHelper module",
@@ -1025,18 +1569,195 @@
             "TagHelper"
           ],
           "methods": [
-            "javascript_include_tag",
-            "stylesheet_link_tag",
+            "audio_tag",
             "auto_discovery_link_tag",
             "favicon_link_tag",
-            "preload_link_tag",
             "image_tag",
+            "javascript_include_tag",
             "picture_tag",
-            "video_tag",
-            "audio_tag",
-            "multiple_sources_tag_builder"
+            "preload_link_tag",
+            "stylesheet_link_tag",
+            "video_tag"
+          ],
+          "class_methods": [
+
           ],
           "loc": 680
+        },
+        "ActionView::AssetUrlHelper": {
+          "description": "AssetUrlHelper module",
+          "components": [
+
+          ],
+          "methods": [
+            "asset_path",
+            "asset_url",
+            "audio_path",
+            "audio_url",
+            "compute_asset_extname",
+            "compute_asset_host",
+            "compute_asset_path",
+            "font_path",
+            "font_url",
+            "image_path",
+            "image_url",
+            "javascript_path",
+            "javascript_url",
+            "stylesheet_path",
+            "stylesheet_url",
+            "video_path",
+            "video_url"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 473
+        },
+        "ActionView::AtomFeedHelper": {
+          "description": "AtomFeedHelper module",
+          "components": [
+
+          ],
+          "methods": [
+            "atom_feed",
+            "initialize"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 203
+        },
+        "ActionView::CacheExpiry": {
+          "description": "CacheExpiry module",
+          "components": [
+
+          ],
+          "methods": [
+            "execute",
+            "initialize",
+            "updated?"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 69
+        },
+        "ActionView::CacheHelper": {
+          "description": "CacheHelper module",
+          "components": [
+
+          ],
+          "methods": [
+            "cache",
+            "cache_fragment_name",
+            "cache_if",
+            "cache_unless",
+            "caching?",
+            "digest_path_from_template",
+            "uncacheable!"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 315
+        },
+        "ActionView::CaptureHelper": {
+          "description": "CaptureHelper module",
+          "components": [
+
+          ],
+          "methods": [
+            "capture",
+            "content_for",
+            "content_for?",
+            "provide",
+            "with_output_buffer"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 236
+        },
+        "ActionView::Checkable": {
+          "description": "Checkable module",
+          "components": [
+
+          ],
+          "methods": [
+            "input_checked?"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 18
+        },
+        "ActionView::CollectionCaching": {
+          "description": "CollectionCaching module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 120
+        },
+        "ActionView::CollectionHelpers": {
+          "description": "CollectionHelpers module",
+          "components": [
+
+          ],
+          "methods": [
+            "initialize",
+            "label"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 118
+        },
+        "ActionView::ContentExfiltrationPreventionHelper": {
+          "description": "ContentExfiltrationPreventionHelper module",
+          "components": [
+
+          ],
+          "methods": [
+            "prevent_content_exfiltration"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 70
+        },
+        "ActionView::ControllerHelper": {
+          "description": "ControllerHelper module",
+          "components": [
+
+          ],
+          "methods": [
+            "assign_controller",
+            "logger",
+            "respond_to?"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 42
+        },
+        "ActionView::CspHelper": {
+          "description": "CspHelper module",
+          "components": [
+
+          ],
+          "methods": [
+            "csp_meta_tag"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 26
         }
       }
     },
@@ -1103,7 +1824,7 @@
         "ActiveJob::TimeWithZoneSerializer"
       ],
       "dependencies": [
-
+        "activesupport"
       ],
       "color": "#FF9800",
       "moduleDetails": {
@@ -1115,6 +1836,9 @@
           "methods": [
 
           ],
+          "class_methods": [
+
+          ],
           "loc": 59
         },
         "ActiveJob::Arguments": {
@@ -1123,16 +1847,11 @@
 
           ],
           "methods": [
-            "serialize",
             "deserialize",
-            "serialize_argument",
-            "deserialize_argument",
-            "serialized_global_id?",
-            "deserialize_global_id",
-            "custom_serialized?",
-            "serialize_hash",
-            "deserialize_hash",
-            "serialize_hash_key"
+            "serialize"
+          ],
+          "class_methods": [
+
           ],
           "loc": 197
         },
@@ -1140,28 +1859,20 @@
           "description": "Callbacks module",
           "components": [
             "ActiveSupport::Concern",
-            "ActiveSupport::Callbacks",
             "ActiveSupport::Callbacks"
           ],
           "methods": [
-            "before_perform",
+            "after_enqueue",
             "after_perform",
+            "around_enqueue",
             "around_perform",
             "before_enqueue",
-            "after_enqueue",
-            "around_enqueue"
+            "before_perform"
+          ],
+          "class_methods": [
+
           ],
           "loc": 167
-        },
-        "ActiveJob::ClassMethods": {
-          "description": "ClassMethods module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "ActiveJob::Core": {
           "description": "Core module",
@@ -1169,18 +1880,196 @@
             "ActiveSupport::Concern"
           ],
           "methods": [
-            "successfully_enqueued?",
             "deserialize",
-            "set",
             "initialize",
             "serialize",
-            "deserialize",
             "set",
-            "serialize_arguments_if_needed",
-            "deserialize_arguments_if_needed",
-            "serialize_arguments"
+            "successfully_enqueued?"
+          ],
+          "class_methods": [
+
           ],
           "loc": 202
+        },
+        "ActiveJob::Enqueuing": {
+          "description": "Job enqueuing interface",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "perform_later"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 140
+        },
+        "ActiveJob::Exceptions": {
+          "description": "Exceptions module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "after_discard",
+            "discard_on",
+            "retry_job",
+            "retry_on"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 206
+        },
+        "ActiveJob::Execution": {
+          "description": "Execution module",
+          "components": [
+            "ActiveSupport::Concern",
+            "ActiveSupport::Rescuable"
+          ],
+          "methods": [
+            "execute",
+            "perform",
+            "perform_now"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 72
+        },
+        "ActiveJob::Instrumentation": {
+          "description": "Instrumentation module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "perform_now"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 52
+        },
+        "ActiveJob::Logging": {
+          "description": "Logging module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "perform_now"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 49
+        },
+        "ActiveJob::QueueAdapter": {
+          "description": "QueueAdapter module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "queue_adapter",
+            "queue_adapter=",
+            "queue_adapter_name"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 78
+        },
+        "ActiveJob::QueueAdapters": {
+          "description": "Queue backend adapters",
+          "components": [
+            "ActiveSupport::Autoload",
+            "Sidekiq::Worker"
+          ],
+          "methods": [
+            "build_queue",
+            "enqueue",
+            "enqueue_all",
+            "enqueue_at",
+            "executor",
+            "immediate=",
+            "initialize",
+            "perform",
+            "shutdown"
+          ],
+          "class_methods": [
+            "lookup",
+            "perform"
+          ],
+          "loc": 429
+        },
+        "ActiveJob::QueueName": {
+          "description": "QueueName module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "queue_as",
+            "queue_name",
+            "queue_name_from_part"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 68
+        },
+        "ActiveJob::QueuePriority": {
+          "description": "QueuePriority module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "priority",
+            "queue_with_priority"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 60
+        },
+        "ActiveJob::Serializers": {
+          "description": "Serializers module",
+          "components": [
+            "ActiveSupport::Autoload"
+          ],
+          "methods": [
+            "add_serializers",
+            "deserialize",
+            "serialize",
+            "serializers"
+          ],
+          "class_methods": [
+            "serialize"
+          ],
+          "loc": 147
+        },
+        "ActiveJob::Timezones": {
+          "description": "Timezones module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 13
+        },
+        "ActiveJob::Translation": {
+          "description": "Translation module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 13
         }
       }
     },
@@ -1290,30 +2179,22 @@
         "ActiveModel::YAMLEncoder"
       ],
       "dependencies": [
-
+        "activesupport"
       ],
       "color": "#4CAF50",
       "moduleDetails": {
         "ActiveModel": {
           "description": "ActiveModel module",
           "components": [
-            "ActiveSupport::Autoload",
             "ActiveSupport::Autoload"
           ],
           "methods": [
-            "self"
+
+          ],
+          "class_methods": [
+            "eager_load!"
           ],
           "loc": 84
-        },
-        "ActiveModel::API": {
-          "description": "API module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "ActiveModel::Access": {
           "description": "Access module",
@@ -1324,17 +2205,10 @@
             "slice",
             "values_at"
           ],
+          "class_methods": [
+
+          ],
           "loc": 16
-        },
-        "ActiveModel::AttrNames": {
-          "description": "AttrNames module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "ActiveModel::AttributeAssignment": {
           "description": "AttributeAssignment module",
@@ -1345,7 +2219,173 @@
             "assign_attributes",
             "attribute_writer_missing"
           ],
+          "class_methods": [
+
+          ],
           "loc": 78
+        },
+        "ActiveModel::AttributeMethods": {
+          "description": "AttributeMethods module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "alias_attribute",
+            "alias_attribute_method_definition",
+            "aliases_by_attribute_name",
+            "attribute_alias",
+            "attribute_alias?",
+            "attribute_method_affix",
+            "attribute_method_prefix",
+            "attribute_method_suffix",
+            "define_attribute_method",
+            "define_attribute_method_pattern",
+            "define_attribute_methods",
+            "eagerly_generate_alias_attribute_methods",
+            "generate_alias_attribute_methods",
+            "undefine_attribute_methods"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 592
+        },
+        "ActiveModel::AttributeRegistration": {
+          "description": "AttributeRegistration module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "attribute",
+            "attribute_types",
+            "decorate_attributes",
+            "type_for_attribute"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 117
+        },
+        "ActiveModel::Attributes": {
+          "description": "Attributes module",
+          "components": [
+            "ActiveSupport::Concern",
+            "ActiveModel::AttributeRegistration",
+            "ActiveModel::AttributeMethods"
+          ],
+          "methods": [
+            "attribute",
+            "attribute_names"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 165
+        },
+        "ActiveModel::Callbacks": {
+          "description": "Callbacks module",
+          "components": [
+            "ActiveSupport::Callbacks"
+          ],
+          "methods": [
+            "define_model_callbacks"
+          ],
+          "class_methods": [
+            "extended"
+          ],
+          "loc": 155
+        },
+        "ActiveModel::Clusivity": {
+          "description": "Clusivity module",
+          "components": [
+            "ResolveValue"
+          ],
+          "methods": [
+            "check_validity!"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 54
+        },
+        "ActiveModel::Comparability": {
+          "description": "Comparability module",
+          "components": [
+
+          ],
+          "methods": [
+            "error_options"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 18
+        },
+        "ActiveModel::Conversion": {
+          "description": "Conversion module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "to_key",
+            "to_model",
+            "to_param",
+            "to_partial_path"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 121
+        },
+        "ActiveModel::Dirty": {
+          "description": "Dirty module",
+          "components": [
+            "ActiveSupport::Concern",
+            "ActiveModel::AttributeMethods"
+          ],
+          "methods": [
+            "as_json",
+            "attribute_changed?",
+            "attribute_changed_in_place?",
+            "attribute_previously_changed?",
+            "attribute_previously_was",
+            "attribute_was",
+            "changed",
+            "changed?",
+            "changed_attributes",
+            "changes",
+            "changes_applied",
+            "clear_attribute_changes",
+            "clear_changes_information",
+            "init_attributes",
+            "initialize_dup",
+            "previous_changes",
+            "restore_attributes"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 422
+        },
+        "ActiveModel::Helpers": {
+          "description": "Helpers module",
+          "components": [
+
+          ],
+          "methods": [
+            "cast",
+            "changed?",
+            "changed_in_place?",
+            "default_timezone",
+            "is_utc?",
+            "mutable?",
+            "serialize",
+            "serialize_cast_value"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 115
         }
       }
     },
@@ -2007,42 +3047,62 @@
         "ActiveRecord::ZeroArityHandler"
       ],
       "dependencies": [
-
+        "activesupport",
+        "activemodel"
       ],
       "color": "#2E7D32",
       "moduleDetails": {
         "ActiveRecord": {
           "description": "ActiveRecord module",
           "components": [
-            "ActiveSupport::Autoload",
-            "ActiveSupport::Autoload",
-            "ActiveSupport::Autoload",
-            "ActiveSupport::Autoload",
             "ActiveSupport::Autoload"
           ],
           "methods": [
-            "self",
-            "self",
-            "self",
-            "self",
-            "self",
-            "self",
-            "self",
-            "self",
-            "self",
-            "self"
+            "average",
+            "count",
+            "create",
+            "destroy",
+            "distinct",
+            "errors",
+            "find",
+            "find_by",
+            "group",
+            "having",
+            "includes",
+            "joins",
+            "limit",
+            "maximum",
+            "minimum",
+            "offset",
+            "order",
+            "pluck",
+            "save",
+            "select",
+            "sum",
+            "update",
+            "valid?",
+            "where"
+          ],
+          "class_methods": [
+            "after_all_transactions_commit",
+            "all_open_transactions",
+            "column_names",
+            "connection",
+            "db_warnings_action=",
+            "default_timezone=",
+            "disconnect_all!",
+            "eager_load!",
+            "global_executor_concurrency",
+            "global_executor_concurrency=",
+            "global_thread_pool_async_query_executor",
+            "marshalling_format_version",
+            "marshalling_format_version=",
+            "permanent_connection_checkout=",
+            "primary_key",
+            "schema_cache_ignored_table?",
+            "table_name"
           ],
           "loc": 571
-        },
-        "ActiveRecord::AbstractPool": {
-          "description": "AbstractPool module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "ActiveRecord::Aggregations": {
           "description": "Aggregations module",
@@ -2051,12 +3111,10 @@
           ],
           "methods": [
             "initialize_dup",
-            "reload",
-            "clear_aggregation_cache",
-            "init_internals",
-            "composed_of",
-            "reader_method",
-            "writer_method"
+            "reload"
+          ],
+          "class_methods": [
+
           ],
           "loc": 287
         },
@@ -2068,20 +3126,297 @@
           "methods": [
             "as"
           ],
+          "class_methods": [
+
+          ],
           "loc": 9
         },
         "ActiveRecord::Arel": {
           "description": "Arel module",
           "components": [
+            "TreeManager::StatementMethods"
+          ],
+          "methods": [
+            "between",
+            "compile_delete",
+            "compile_insert",
+            "compile_update",
+            "concat",
+            "contains",
+            "create_insert",
+            "does_not_match",
+            "does_not_match_all",
+            "does_not_match_any",
+            "does_not_match_regexp",
+            "eq",
+            "eq_all",
+            "eq_any",
+            "from",
+            "group",
+            "gt",
+            "gt_all",
+            "gt_any",
+            "gteq",
+            "gteq_all",
+            "gteq_any",
+            "having",
+            "in",
+            "in_all",
+            "in_any",
+            "initialize",
+            "is_distinct_from",
+            "is_not_distinct_from",
+            "lt",
+            "lt_all",
+            "lt_any",
+            "lteq",
+            "lteq_all",
+            "lteq_any",
+            "matches",
+            "matches_all",
+            "matches_any",
+            "matches_regexp",
+            "not_between",
+            "not_eq",
+            "not_eq_all",
+            "not_eq_any",
+            "not_in",
+            "not_in_all",
+            "not_in_any",
+            "overlaps",
+            "quoted_array",
+            "when"
+          ],
+          "class_methods": [
+            "arel_node?",
+            "fetch_attribute",
+            "sql",
+            "star"
+          ],
+          "loc": 413
+        },
+        "ActiveRecord::Associations": {
+          "description": "Define relationships between models",
+          "components": [
+            "ActiveSupport::Autoload",
+            "ActiveSupport::Concern",
+            "Module"
+          ],
+          "methods": [
+            "association",
+            "association_cached?",
+            "build",
+            "calculate",
+            "clear",
+            "create",
+            "create!",
+            "delete",
+            "delete_all",
+            "destroy",
+            "destroy_all",
+            "done?",
+            "empty?",
+            "eql?",
+            "find",
+            "future_classes",
+            "grouped_records",
+            "hash",
+            "immediate_future_classes",
+            "include?",
+            "initialize",
+            "initialize_dup",
+            "inspect",
+            "last",
+            "likely_reflections",
+            "load_records_for_keys",
+            "load_records_in_batch",
+            "load_target",
+            "loaded?",
+            "loaders",
+            "pluck",
+            "polymorphic?",
+            "preloaded_records",
+            "preloaders_for_reflection",
+            "prepend",
+            "pretty_print",
+            "proxy_association",
+            "records",
+            "records_by_owner",
+            "records_for",
+            "reload",
+            "replace",
+            "reset",
+            "reset_scope",
+            "root?",
+            "runnable_loaders",
+            "scope",
+            "size",
+            "source_records",
+            "take",
+            "target",
+            "target_classes"
+          ],
+          "class_methods": [
+            "eager_load!"
+          ],
+          "loc": 3691
+        },
+        "ActiveRecord::AttributeMethods": {
+          "description": "AttributeMethods module",
+          "components": [
+            "ActiveSupport::Concern",
+            "ActiveModel::AttributeMethods",
+            "Read",
+            "Write",
+            "BeforeTypeCast",
+            "Query",
+            "PrimaryKey",
+            "TimeZoneConversion",
+            "Dirty",
+            "Serialization"
+          ],
+          "methods": [
+            "alias_attribute",
+            "alias_attribute_method_definition",
+            "attribute_method?",
+            "attribute_methods_generated?",
+            "attribute_names",
+            "cast",
+            "dangerous_attribute_method?",
+            "dangerous_class_method?",
+            "define_attribute_methods",
+            "deserialize",
+            "eagerly_generate_alias_attribute_methods",
+            "generate_alias_attribute_methods",
+            "generate_alias_attributes",
+            "has_attribute?",
+            "id",
+            "id=",
+            "id?",
+            "id_before_type_cast",
+            "id_for_database",
+            "id_in_database",
+            "id_was",
+            "initialize",
+            "initialize_generated_modules",
+            "instance_method_already_implemented?",
+            "method_defined_within?",
+            "primary_key_values_present?",
+            "serialize",
+            "undefine_attribute_methods"
+          ],
+          "class_methods": [
+            "dangerous_attribute_methods",
+            "new"
+          ],
+          "loc": 988
+        },
+        "ActiveRecord::Attributes": {
+          "description": "Attributes module",
+          "components": [
+            "ActiveSupport::Concern",
+            "ActiveModel::AttributeRegistration",
+            "Arel::Expressions",
+            "Arel::Predications",
+            "Arel::AliasPredication",
+            "Arel::OrderPredications",
+            "Arel::Math"
+          ],
+          "methods": [
+            "able_to_type_cast?",
+            "define_attribute",
+            "lower",
+            "type_cast_for_database",
+            "type_caster"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 339
+        },
+        "ActiveRecord::AutosaveAssociation": {
+          "description": "AutosaveAssociation module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+
+          ],
+          "class_methods": [
+            "build",
+            "valid_options"
+          ],
+          "loc": 586
+        },
+        "ActiveRecord::Batches": {
+          "description": "Batches module",
+          "components": [
+            "Enumerable"
+          ],
+          "methods": [
+            "batch_size",
+            "delete_all",
+            "destroy_all",
+            "each",
+            "each_record",
+            "find_each",
+            "find_in_batches",
+            "in_batches",
+            "initialize",
+            "touch_all",
+            "update_all"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 606
+        },
+        "ActiveRecord::BeforeTypeCast": {
+          "description": "BeforeTypeCast module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "attributes_before_type_cast",
+            "attributes_for_database",
+            "read_attribute_before_type_cast",
+            "read_attribute_for_database"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 106
+        },
+        "ActiveRecord::Calculations": {
+          "description": "Calculations module",
+          "components": [
 
           ],
           "methods": [
-            "self",
-            "self",
-            "self",
-            "self"
+            "alias_for",
+            "initialize"
           ],
-          "loc": 73
+          "class_methods": [
+
+          ],
+          "loc": 675
+        },
+        "ActiveRecord::Callbacks": {
+          "description": "Lifecycle callbacks for models",
+          "components": [
+            "ActiveSupport::Concern",
+            "ActiveModel::Callbacks",
+            "ActiveModel::Validations::Callbacks"
+          ],
+          "methods": [
+            "destroy",
+            "increment!",
+            "touch"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 452
         }
       }
     },
@@ -2156,40 +3491,25 @@
         "Service::S3Service"
       ],
       "dependencies": [
-
+        "activesupport",
+        "actionpack",
+        "activejob",
+        "activerecord"
       ],
       "color": "#FF5722",
       "moduleDetails": {
         "ActiveStorage": {
           "description": "ActiveStorage module",
           "components": [
-            "ActiveSupport::Autoload",
             "ActiveSupport::Autoload"
           ],
           "methods": [
 
           ],
+          "class_methods": [
+
+          ],
           "loc": 374
-        },
-        "ActiveStorage::ActiveRecordExtensions": {
-          "description": "ActiveRecordExtensions module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
-        },
-        "ActiveStorage::ClassMethods": {
-          "description": "ClassMethods module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "ActiveStorage::Reflection": {
           "description": "Reflection module",
@@ -2197,24 +3517,29 @@
 
           ],
           "methods": [
-            "variant",
-            "named_variants",
-            "macro",
-            "macro",
             "add_attachment_reflection",
-            "reflection_class_for"
+            "macro",
+            "named_variants",
+            "variant"
+          ],
+          "class_methods": [
+
           ],
           "loc": 74
         },
-        "ActiveStorage::ReflectionExtension": {
-          "description": "ReflectionExtension module",
+        "ActiveStorage::Transformers": {
+          "description": "Transformers module",
           "components": [
 
           ],
           "methods": [
+            "initialize",
+            "transform"
+          ],
+          "class_methods": [
 
           ],
-          "loc": 0
+          "loc": 151
         }
       }
     },
@@ -2542,7 +3867,9 @@
         "URI::Generic"
       ],
       "dependencies": [
-
+        "i18n",
+        "tzinfo",
+        "concurrent-ruby"
       ],
       "color": "#4A90E2",
       "moduleDetails": {
@@ -2552,13 +3879,16 @@
             "ActiveSupport::Autoload"
           ],
           "methods": [
-            "self",
-            "self",
-            "self",
-            "self",
-            "self",
-            "self",
-            "self"
+
+          ],
+          "class_methods": [
+            "cache_format_version",
+            "cache_format_version=",
+            "eager_load!",
+            "to_time_preserves_timezone",
+            "to_time_preserves_timezone=",
+            "utc_to_local_returns_utc_offset_times",
+            "utc_to_local_returns_utc_offset_times="
           ],
           "loc": 143
         },
@@ -2568,21 +3898,13 @@
             "Concern"
           ],
           "methods": [
-            "self",
-            "self",
             "action"
           ],
+          "class_methods": [
+            "actions",
+            "dispatch"
+          ],
           "loc": 50
-        },
-        "ActiveSupport::AllowMarshal": {
-          "description": "AllowMarshal module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "ActiveSupport::Assertions": {
           "description": "Assertions module",
@@ -2590,13 +3912,16 @@
 
           ],
           "methods": [
-            "assert_not",
-            "assert_raises",
-            "assert_nothing_raised",
-            "assert_difference",
-            "assert_no_difference",
             "assert_changes",
-            "assert_no_changes"
+            "assert_difference",
+            "assert_no_changes",
+            "assert_no_difference",
+            "assert_not",
+            "assert_nothing_raised",
+            "assert_raises"
+          ],
+          "class_methods": [
+
           ],
           "loc": 339
         },
@@ -2607,12 +3932,136 @@
           ],
           "methods": [
             "autoload",
-            "autoload_under",
             "autoload_at",
+            "autoload_under",
             "eager_autoload",
             "eager_load!"
           ],
+          "class_methods": [
+
+          ],
           "loc": 72
+        },
+        "ActiveSupport::Benchmarkable": {
+          "description": "Benchmarkable module",
+          "components": [
+
+          ],
+          "methods": [
+            "benchmark"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 53
+        },
+        "ActiveSupport::Cache": {
+          "description": "Caching framework with multiple store implementations",
+          "components": [
+
+          ],
+          "methods": [
+            "bytesize",
+            "cleanup",
+            "clear",
+            "compressed",
+            "compressed?",
+            "decrement",
+            "delete_matched",
+            "dump",
+            "dump_compressed",
+            "dup_value!",
+            "expand_cache_key",
+            "expired?",
+            "expires_at",
+            "expires_at=",
+            "increment",
+            "initialize",
+            "inspect",
+            "load",
+            "local?",
+            "mismatched?",
+            "pack",
+            "stats",
+            "value"
+          ],
+          "class_methods": [
+            "build_mem_cache",
+            "lookup_store",
+            "supports_cache_versioning?",
+            "unpack"
+          ],
+          "loc": 1855
+        },
+        "ActiveSupport::CacheSerializer": {
+          "description": "CacheSerializer module",
+          "components": [
+            "Serializer"
+          ],
+          "methods": [
+            "load"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 23
+        },
+        "ActiveSupport::Callbacks": {
+          "description": "Define and chain callbacks around methods",
+          "components": [
+            "Concern",
+            "ActiveSupport::DescendantsTracker",
+            "Enumerable"
+          ],
+          "methods": [
+            "run_callbacks"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 944
+        },
+        "ActiveSupport::ClassAttribute": {
+          "description": "ClassAttribute module",
+          "components": [
+
+          ],
+          "methods": [
+
+          ],
+          "class_methods": [
+            "redefine"
+          ],
+          "loc": 26
+        },
+        "ActiveSupport::Concern": {
+          "description": "Create reusable modules with dependency resolution",
+          "components": [
+
+          ],
+          "methods": [
+
+          ],
+          "class_methods": [
+            "append_features",
+            "class_methods",
+            "included"
+          ],
+          "loc": 14
+        },
+        "ActiveSupport::Concerning": {
+          "description": "Concerning module",
+          "components": [
+
+          ],
+          "methods": [
+            "concern",
+            "concerning"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 140
         }
       }
     },
@@ -2805,7 +4254,10 @@
         "Railties"
       ],
       "dependencies": [
-
+        "activesupport",
+        "actionpack",
+        "thor",
+        "zeitwerk"
       ],
       "color": "#CC0000",
       "moduleDetails": {
@@ -2816,38 +4268,20 @@
             "ActiveSupport::Benchmarkable"
           ],
           "methods": [
-            "application",
-            "configuration",
+            "autoloaders",
             "backtrace_cleaner",
-            "root",
+            "configuration",
             "env",
             "env=",
             "error",
             "groups",
             "public_path",
-            "autoloaders"
+            "root"
+          ],
+          "class_methods": [
+            "application"
           ],
           "loc": 130
-        },
-        "Rails::API": {
-          "description": "API module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
-        },
-        "Rails::ActionMethods": {
-          "description": "ActionMethods module",
-          "components": [
-
-          ],
-          "methods": [
-
-          ],
-          "loc": 0
         },
         "Rails::Actions": {
           "description": "Actions module",
@@ -2855,26 +4289,192 @@
 
           ],
           "methods": [
-            "set_application_directory!",
-            "require_application!",
             "boot_application!",
+            "existing_migration",
+            "identical?",
+            "invoke!",
             "load_environment_config!",
-            "load_tasks",
             "load_generators",
             "load_tasks",
-            "load_generators"
+            "migration_dir",
+            "migration_file_name",
+            "relative_existing_migration",
+            "require_application!",
+            "revoke!",
+            "set_application_directory!"
           ],
-          "loc": 52
+          "class_methods": [
+
+          ],
+          "loc": 127
         },
         "Rails::App": {
           "description": "App module",
           "components": [
+            "Thor::Actions"
+          ],
+          "methods": [
+            "active_storage",
+            "bin",
+            "configs",
+            "perform",
+            "public_directory"
+          ],
+          "class_methods": [
 
+          ],
+          "loc": 774
+        },
+        "Rails::AppLoader": {
+          "description": "AppLoader module",
+          "components": [
+
+          ],
+          "methods": [
+            "exec_app",
+            "find_executable"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 77
+        },
+        "Rails::Assertions": {
+          "description": "Assertions module",
+          "components": [
+
+          ],
+          "methods": [
+            "assert_class_method",
+            "assert_field_default_value",
+            "assert_field_type",
+            "assert_file",
+            "assert_initializer",
+            "assert_instance_method",
+            "assert_migration",
+            "assert_no_file",
+            "assert_no_migration"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 147
+        },
+        "Rails::Behavior": {
+          "description": "Behavior module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "no_color!",
+            "subclasses"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 84
+        },
+        "Rails::Bootstrap": {
+          "description": "Bootstrap module",
+          "components": [
+            "Initializable"
           ],
           "methods": [
 
           ],
-          "loc": 0
+          "class_methods": [
+
+          ],
+          "loc": 117
+        },
+        "Rails::Command": {
+          "description": "Command module",
+          "components": [
+            "ActiveSupport::Autoload",
+            "DidYouMean::Correctable",
+            "Behavior",
+            "Actions",
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "application_root",
+            "banner",
+            "base_name",
+            "boot_application!",
+            "class_usage",
+            "command_name",
+            "corrections",
+            "default_command_root",
+            "desc",
+            "engine?",
+            "environment",
+            "executable",
+            "find_by_namespace",
+            "help",
+            "hide_command!",
+            "inherited",
+            "initialize",
+            "invoke",
+            "load_environment_config!",
+            "load_generators",
+            "load_tasks",
+            "namespace",
+            "no_color!",
+            "perform",
+            "printing_commands",
+            "require_application!",
+            "root",
+            "set_application_directory!",
+            "subclasses",
+            "usage_path"
+          ],
+          "class_methods": [
+            "exit_on_failure?",
+            "hidden_commands"
+          ],
+          "loc": 543
+        },
+        "Rails::Configurable": {
+          "description": "Configurable module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "configure",
+            "inherited",
+            "instance",
+            "respond_to?"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 36
+        },
+        "Rails::DevCaching": {
+          "description": "DevCaching module",
+          "components": [
+
+          ],
+          "methods": [
+            "enable_by_argument"
+          ],
+          "class_methods": [
+            "enable_by_file"
+          ],
+          "loc": 44
+        },
+        "Rails::EnvironmentArgument": {
+          "description": "EnvironmentArgument module",
+          "components": [
+            "ActiveSupport::Concern"
+          ],
+          "methods": [
+            "initialize"
+          ],
+          "class_methods": [
+
+          ],
+          "loc": 56
         }
       }
     },
@@ -2905,6 +4505,146 @@
     }
   ],
   "dependencies": [
+    {
+      "source": "actioncable",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "actioncable",
+      "target": "actionpack",
+      "strength": 6
+    },
+    {
+      "source": "actionmailbox",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "actionmailbox",
+      "target": "activerecord",
+      "strength": 3
+    },
+    {
+      "source": "actionmailbox",
+      "target": "activestorage",
+      "strength": 3
+    },
+    {
+      "source": "actionmailbox",
+      "target": "activejob",
+      "strength": 3
+    },
+    {
+      "source": "actionmailbox",
+      "target": "actionpack",
+      "strength": 6
+    },
+    {
+      "source": "actionmailer",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "actionmailer",
+      "target": "actionpack",
+      "strength": 6
+    },
+    {
+      "source": "actionmailer",
+      "target": "actionview",
+      "strength": 3
+    },
+    {
+      "source": "actionmailer",
+      "target": "activejob",
+      "strength": 3
+    },
+    {
+      "source": "actionpack",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "actionpack",
+      "target": "actionview",
+      "strength": 3
+    },
+    {
+      "source": "actiontext",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "actiontext",
+      "target": "activerecord",
+      "strength": 3
+    },
+    {
+      "source": "actiontext",
+      "target": "activestorage",
+      "strength": 3
+    },
+    {
+      "source": "actiontext",
+      "target": "actionpack",
+      "strength": 6
+    },
+    {
+      "source": "actionview",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "activejob",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "activemodel",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "activerecord",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "activerecord",
+      "target": "activemodel",
+      "strength": 8
+    },
+    {
+      "source": "activestorage",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "activestorage",
+      "target": "actionpack",
+      "strength": 6
+    },
+    {
+      "source": "activestorage",
+      "target": "activejob",
+      "strength": 3
+    },
+    {
+      "source": "activestorage",
+      "target": "activerecord",
+      "strength": 3
+    },
+    {
+      "source": "railties",
+      "target": "activesupport",
+      "strength": 10
+    },
+    {
+      "source": "railties",
+      "target": "actionpack",
+      "strength": 6
+    },
     {
       "source": "rails",
       "target": "actioncable",
@@ -2971,6 +4711,6 @@
     "total_modules": 608,
     "total_classes": 1338,
     "gem_count": 12,
-    "analyzed_at": "2025-09-10T15:54:50+05:30"
+    "analyzed_at": "2025-09-13T07:43:08+05:30"
   }
 }

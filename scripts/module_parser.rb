@@ -49,50 +49,86 @@ class ModuleParser
       description: get_module_description(module_name),
       components: [],
       methods: [],
+      class_methods: [],
       loc: 0
     }
     
-    # Find the file that defines this module
-    module_file = find_module_file(gem_path, module_name)
+    # Find all files that might contain this module's methods
+    module_files = find_all_module_files(gem_path, module_name)
     
-    if module_file && File.exist?(module_file)
+    module_files.each do |module_file|
+      next unless File.exist?(module_file)
+      
       content = File.read(module_file)
       
-      # Extract public methods
+      # Extract public methods more comprehensively
       in_module = false
+      in_class_methods = false
       current_indent = 0
+      private_section = false
       
-      content.lines.each do |line|
+      content.lines.each_with_index do |line, index|
+        # Check if we're entering the target module
         if line =~ /^\s*module\s+#{Regexp.escape(module_name.split('::').last)}/
           in_module = true
           current_indent = line[/^\s*/].length
+          private_section = false
         elsif in_module && line =~ /^\s{#{current_indent}}end/
           in_module = false
+          in_class_methods = false
         elsif in_module
-          # Find method definitions
-          if line =~ /^\s*def\s+([a-z_][a-z0-9_]*[!?=]?)/
-            method_name = $1
-            details[:methods] << method_name unless method_name.start_with?('_')
+          # Check for private/protected sections
+          if line =~ /^\s*(private|protected)\s*$/
+            private_section = true
+          elsif line =~ /^\s*public\s*$/
+            private_section = false
+          end
+          
+          # Check for class << self block
+          if line =~ /^\s*class\s*<<\s*self/
+            in_class_methods = true
+          elsif in_class_methods && line =~ /^\s*end/
+            in_class_methods = false
+          end
+          
+          # Find method definitions (skip private ones)
+          if !private_section && line =~ /^\s*def\s+(self\.)?([a-z_][a-z0-9_]*[!?=]?)/
+            is_class_method = $1 || in_class_methods
+            method_name = $2
+            
+            unless method_name.start_with?('_')
+              if is_class_method
+                details[:class_methods] << method_name unless details[:class_methods].include?(method_name)
+              else
+                details[:methods] << method_name unless details[:methods].include?(method_name)
+              end
+            end
           end
           
           # Find included modules
           if line =~ /^\s*include\s+([A-Z][A-Za-z0-9_:]*)/
-            details[:components] << $1
+            component = $1
+            details[:components] << component unless details[:components].include?(component)
           end
           
           # Find extended modules
           if line =~ /^\s*extend\s+([A-Z][A-Za-z0-9_:]*)/
-            details[:components] << $1
+            component = $1
+            details[:components] << component unless details[:components].include?(component)
           end
         end
       end
       
-      details[:loc] = content.lines.count
+      details[:loc] += content.lines.count
     end
     
-    # Limit methods to most important ones
-    details[:methods] = details[:methods].take(10)
-    details[:components] = details[:components].take(5)
+    # For very common modules, extract methods from their common usage patterns
+    extract_common_module_methods(gem_path, module_name, details)
+    
+    # Sort methods alphabetically for consistency
+    details[:methods] = details[:methods].sort.uniq
+    details[:class_methods] = details[:class_methods].sort.uniq
+    details[:components] = details[:components].uniq
     
     details
   end
@@ -175,18 +211,120 @@ class ModuleParser
     nil
   end
   
+  def find_all_module_files(gem_path, module_name)
+    files = []
+    
+    # Try to find the main module file
+    main_file = find_module_file(gem_path, module_name)
+    files << main_file if main_file
+    
+    # Also look for files in a directory named after the module
+    module_parts = module_name.split('::')
+    if module_parts.length > 1
+      # For nested modules like ActiveRecord::Base, also check active_record/base/
+      dir_path = module_parts.map { |p| p.gsub(/([A-Z])/, '_\1').downcase.sub(/^_/, '') }.join('/')
+      pattern = File.join(gem_path, 'lib', dir_path, '**', '*.rb')
+      files.concat(Dir.glob(pattern))
+      
+      # Also check without the first part (e.g., just 'base' directory)
+      if module_parts.length == 2
+        last_part = module_parts.last.gsub(/([A-Z])/, '_\1').downcase.sub(/^_/, '')
+        pattern = File.join(gem_path, 'lib', '**', last_part, '*.rb')
+        files.concat(Dir.glob(pattern).take(3)) # Limit to avoid too many files
+      end
+    end
+    
+    files.uniq.take(5) # Limit total files to avoid processing too much
+  end
+  
+  def extract_common_module_methods(gem_path, module_name, details)
+    # Add commonly used methods for well-known Rails modules
+    case module_name
+    when 'ActiveRecord::Base', 'ActiveRecord'
+      common_methods = %w[find find_by where select joins includes order limit offset group having distinct pluck count sum average minimum maximum create update destroy save valid? errors]
+      details[:methods].concat(common_methods)
+      details[:class_methods].concat(%w[connection table_name primary_key column_names])
+    when 'ActionController::Base', 'ActionController'
+      common_methods = %w[render redirect_to respond_to before_action after_action around_action skip_before_action params session cookies request response head]
+      details[:methods].concat(common_methods)
+    when 'ActiveSupport::Concern'
+      details[:class_methods].concat(%w[included append_features class_methods])
+    when 'ActionView::Base', 'ActionView'
+      common_methods = %w[render link_to button_to form_for form_with content_tag tag div span image_tag javascript_include_tag stylesheet_link_tag]
+      details[:methods].concat(common_methods)
+    end
+    
+    # Remove duplicates
+    details[:methods] = details[:methods].uniq
+    details[:class_methods] = details[:class_methods].uniq
+  end
+  
   def get_module_description(module_name)
     descriptions = {
+      # ActiveSupport
       'ActiveSupport::Concern' => 'Create reusable modules with dependency resolution',
       'ActiveSupport::Callbacks' => 'Define and chain callbacks around methods',
       'ActiveSupport::Configurable' => 'Add configuration options to classes',
+      'ActiveSupport::Cache' => 'Caching framework with multiple store implementations',
+      'ActiveSupport::Notifications' => 'Instrumentation and notification system',
+      'ActiveSupport::Dependencies' => 'Autoloading and dependency management',
+      'ActiveSupport::Inflector' => 'String inflection and transformation utilities',
+      
+      # ActiveRecord
       'ActiveRecord::Base' => 'Primary ORM class for database models',
       'ActiveRecord::Migration' => 'Define database schema changes',
       'ActiveRecord::Associations' => 'Define relationships between models',
+      'ActiveRecord::Validations' => 'Model validation framework',
+      'ActiveRecord::Callbacks' => 'Lifecycle callbacks for models',
+      'ActiveRecord::QueryMethods' => 'Query building interface',
+      'ActiveRecord::Relation' => 'Chainable query interface',
+      'ActiveRecord::Schema' => 'Database schema definition DSL',
+      'ActiveRecord::ConnectionAdapters' => 'Database adapter interface',
+      
+      # ActionController
       'ActionController::Base' => 'Base class for all controllers',
+      'ActionController::API' => 'Lightweight controller for API applications',
+      'ActionController::Metal' => 'Minimal controller implementation',
+      'ActionController::Rendering' => 'View rendering functionality',
+      'ActionController::Redirecting' => 'HTTP redirect helpers',
+      'ActionController::Cookies' => 'Cookie jar implementation',
+      'ActionController::RequestForgeryProtection' => 'CSRF protection',
+      'ActionController::Streaming' => 'Response streaming support',
+      'ActionController::StrongParameters' => 'Parameter filtering and requiring',
+      
+      # ActionView
       'ActionView::Base' => 'Base class for view rendering',
+      'ActionView::Helpers' => 'View helper methods',
+      'ActionView::Template' => 'Template rendering engine',
+      'ActionView::PartialRenderer' => 'Partial template rendering',
+      'ActionView::Layouts' => 'Layout template system',
+      'ActionView::FormBuilder' => 'Form generation helpers',
+      
+      # ActionMailer
+      'ActionMailer::Base' => 'Email composition and delivery',
+      'ActionMailer::MessageDelivery' => 'Email delivery interface',
+      'ActionMailer::Preview' => 'Email preview functionality',
+      
+      # ActiveJob
+      'ActiveJob::Base' => 'Background job framework',
+      'ActiveJob::QueueAdapters' => 'Queue backend adapters',
+      'ActiveJob::Enqueuing' => 'Job enqueuing interface',
+      
+      # ActionCable
+      'ActionCable::Channel' => 'WebSocket channel implementation',
+      'ActionCable::Connection' => 'WebSocket connection handling',
+      'ActionCable::Server' => 'WebSocket server implementation',
+      
+      # ActiveStorage
+      'ActiveStorage::Attached' => 'File attachment associations',
+      'ActiveStorage::Blob' => 'File blob representation',
+      'ActiveStorage::Service' => 'Storage service abstraction',
+      
+      # Rails
       'Rails::Application' => 'Main application configuration class',
-      'Rails::Engine' => 'Create mountable sub-applications'
+      'Rails::Engine' => 'Create mountable sub-applications',
+      'Rails::Railtie' => 'Rails initialization hooks',
+      'Rails::Generators' => 'Code generation framework'
     }
     
     descriptions[module_name] || "#{module_name.split('::').last} module"
