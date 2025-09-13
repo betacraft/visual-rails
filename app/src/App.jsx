@@ -17,7 +17,7 @@ function App() {
   const [hideActiveSupport, setHideActiveSupport] = useState(false);
   const [d3LayoutType, setD3LayoutType] = useState('force');
   const [mermaidViewType, setMermaidViewType] = useState('dependency');
-  const [showMetrics, setShowMetrics] = useState(true);
+  const [showMetrics, setShowMetrics] = useState(false);
   const [graphStyle, setGraphStyle] = useState('d3');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
