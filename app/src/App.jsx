@@ -246,26 +246,40 @@ function App() {
               <div className="control-group">
                 <label className="control-label">Layout:</label>
                 <div className="layout-buttons">
-                  <button 
+                  <button
                     className={`layout-btn ${d3LayoutType === 'force' ? 'active' : ''}`}
                     onClick={() => setD3LayoutType('force')}
                     title="Free-form force-directed layout"
                   >
                     Force
                   </button>
-                  <button 
+                  <button
                     className={`layout-btn ${d3LayoutType === 'hierarchical' ? 'active' : ''}`}
                     onClick={() => setD3LayoutType('hierarchical')}
                     title="Top-down dependency hierarchy"
                   >
                     Hierarchical
                   </button>
-                  <button 
+                  <button
                     className={`layout-btn ${d3LayoutType === 'circular' ? 'active' : ''}`}
                     onClick={() => setD3LayoutType('circular')}
                     title="Circular arrangement"
                   >
                     Circular
+                  </button>
+                  <button
+                    className={`layout-btn ${d3LayoutType === 'tree' ? 'active' : ''}`}
+                    onClick={() => setD3LayoutType('tree')}
+                    title="Horizontal tree layout"
+                  >
+                    Tree
+                  </button>
+                  <button
+                    className={`layout-btn ${d3LayoutType === 'radial-tree' ? 'active' : ''}`}
+                    onClick={() => setD3LayoutType('radial-tree')}
+                    title="Radial tree layout"
+                  >
+                    Radial
                   </button>
                 </div>
               </div>

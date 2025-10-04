@@ -29,6 +29,7 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
   const [currentPage, setCurrentPage] = useState(1);
   const [notesExpanded, setNotesExpanded] = useState(false);
   const [visibleSubFlows, setVisibleSubFlows] = useState(1); // For progressive reveal on page 1 of request-flow
+  const [collapsedNodes, setCollapsedNodes] = useState(new Set()); // Track collapsed nodes in tree view
   const totalPages = currentView === 'activerecord-flow' ? 6 : currentView === 'request-flow' ? 9 : 1;
   
   // Page titles for activerecord-flow
@@ -669,6 +670,33 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
       
       textElement.style("font-weight", d.id === 'rails' || d.id === 'railties' ? "bold" : "normal");
 
+      // Add expand/collapse indicator for tree layouts
+      if ((layoutType === 'tree' || layoutType === 'radial-tree') && d._treeData) {
+        if (d._treeData.children || d._treeData._children) {
+          const isCollapsed = collapsedNodes.has(d.id);
+          selection.append("circle")
+            .attr("cx", layoutType === 'tree' ? 70 : 0)
+            .attr("cy", layoutType === 'tree' ? 0 : -30)
+            .attr("r", 8)
+            .attr("fill", "white")
+            .attr("stroke", "#666")
+            .attr("stroke-width", 2)
+            .style("cursor", "pointer")
+            .attr("class", "collapse-indicator");
+
+          selection.append("text")
+            .attr("x", layoutType === 'tree' ? 70 : 0)
+            .attr("y", layoutType === 'tree' ? 0 : -30)
+            .attr("text-anchor", "middle")
+            .attr("dy", "0.35em")
+            .style("fill", "#666")
+            .style("font-size", "12px")
+            .style("font-weight", "bold")
+            .style("pointer-events", "none")
+            .text(isCollapsed ? "+" : "−");
+        }
+      }
+
       if (d.id === 'rails') {
         selection.append("text")
           .text("8.0")
@@ -696,8 +724,24 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
 
     node.on("click", function(event, d) {
       event.stopPropagation();
+
+      // Handle tree collapse/expand
+      if ((layoutType === 'tree' || layoutType === 'radial-tree') && d._treeData) {
+        if (d._treeData.children || d._treeData._children) {
+          // Node has children - toggle collapse
+          const newCollapsedNodes = new Set(collapsedNodes);
+          if (collapsedNodes.has(d.id)) {
+            newCollapsedNodes.delete(d.id);
+          } else {
+            newCollapsedNodes.add(d.id);
+          }
+          setCollapsedNodes(newCollapsedNodes);
+          event.preventDefault();
+          return;
+        }
+      }
+
       onNodeClick(d);
-      
       node.classed("selected", false);
       d3.select(this).classed("selected", true);
     });
@@ -754,20 +798,115 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
       // Flow diagram layout - vertical flow
       setTimeout(() => {
         // Use fixed spacing for activerecord-flow, dynamic for others
-        const spacing = currentView === 'activerecord-flow' 
+        const spacing = currentView === 'activerecord-flow'
           ? 100  // Fixed 100px spacing for activerecord-flow
           : height / (nodes.length + 1);  // Dynamic spacing for other flows
-        
+
         nodes.forEach((node, index) => {
           node.fx = width / 2;
           node.fy = currentView === 'activerecord-flow'
             ? spacing * (index + 1)  // Fixed spacing from top
             : spacing * (index + 1); // Dynamic spacing within container
         });
-        
+
         simulation.alpha(0.3).restart();
         setTimeout(() => simulation.stop(), 1000);
       }, 100);
+    } else if (layoutType === 'tree' || layoutType === 'radial-tree') {
+      // Tree layout (horizontal or radial)
+      setTimeout(() => {
+        // Build hierarchy from nodes and links
+        const nodesMap = new Map(nodes.map(n => [n.id, { ...n, children: [] }]));
+
+        // Find root node (one with no incoming links or the focused gem/module)
+        const targets = new Set(links.map(l => typeof l.target === 'string' ? l.target : l.target.id));
+        let rootNode = nodes.find(n => !targets.has(n.id)) || nodes[0];
+
+        // Build children relationships
+        links.forEach(link => {
+          const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
+          const targetId = typeof link.target === 'string' ? link.target : link.target.id;
+          const parent = nodesMap.get(sourceId);
+          const child = nodesMap.get(targetId);
+          if (parent && child) {
+            parent.children.push(child);
+          }
+        });
+
+        // Create D3 hierarchy
+        const root = d3.hierarchy(nodesMap.get(rootNode.id));
+
+        // Filter out collapsed nodes' children
+        root.each(d => {
+          if (d.data && collapsedNodes.has(d.data.id)) {
+            d._children = d.children; // Save children for later
+            d.children = null; // Hide children
+          }
+        });
+
+        if (layoutType === 'tree') {
+          // Horizontal tree layout
+          // Calculate dynamic height based on number of visible nodes
+          const visibleNodeCount = root.descendants().length;
+          const minVerticalSpacing = 50; // px per node for readability
+          const calculatedHeight = Math.max(
+            container.clientHeight,
+            visibleNodeCount * minVerticalSpacing + 100
+          );
+
+          // Update SVG height to accommodate all nodes
+          svg.attr('height', calculatedHeight);
+
+          const treeLayout = d3.tree()
+            .size([calculatedHeight - 100, width - 200])
+            .separation((a, b) => (a.parent === b.parent ? 1 : 1.5));
+
+          treeLayout(root);
+
+          // Position nodes based on tree layout
+          root.descendants().forEach(d => {
+            const node = nodes.find(n => n.id === d.data.id);
+            if (node) {
+              node.fx = d.y + 100; // Horizontal position
+              node.fy = d.x + 50;  // Vertical position
+              node._treeData = d; // Store tree data for collapse/expand
+            }
+          });
+        } else {
+          // Radial tree layout
+          // For radial layout, also calculate dynamic radius if needed
+          const visibleNodeCount = root.descendants().length;
+          const minRadialSpacing = 30; // Adjust as needed
+          const calculatedRadius = Math.max(
+            Math.min(width, height) / 2 - 100,
+            visibleNodeCount * minRadialSpacing / (2 * Math.PI)
+          );
+
+          // Update SVG height for radial layout
+          const requiredSize = calculatedRadius * 2 + 200;
+          svg.attr('height', Math.max(container.clientHeight, requiredSize));
+
+          const treeLayout = d3.tree()
+            .size([2 * Math.PI, calculatedRadius])
+            .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
+
+          treeLayout(root);
+
+          // Position nodes in radial layout
+          root.descendants().forEach(d => {
+            const node = nodes.find(n => n.id === d.data.id);
+            if (node) {
+              node.fx = width / 2 + d.y * Math.cos(d.x - Math.PI / 2);
+              node.fy = height / 2 + d.y * Math.sin(d.x - Math.PI / 2);
+              node._treeData = d; // Store tree data for collapse/expand
+            }
+          });
+        }
+
+        simulation.alpha(0.3).restart();
+        setTimeout(() => simulation.stop(), 1000);
+      }, 100);
+
     } else if (layoutType === 'hierarchical') {
       // Hierarchical layout - arrange in layers
       setTimeout(() => {
@@ -877,7 +1016,7 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
     return () => {
       simulation.stop();
     };
-  }, [data, currentView, selectedNode, onNodeClick, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule, currentPage, visibleSubFlows]);
+  }, [data, currentView, selectedNode, onNodeClick, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule, currentPage, visibleSubFlows, collapsedNodes]);
 
   return (
     <div ref={containerRef} className="graph-container">
