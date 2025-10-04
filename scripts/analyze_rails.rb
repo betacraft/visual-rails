@@ -111,16 +111,15 @@ class RailsAnalyzer
           modules: @module_parser.parse_modules(gem_path),
           classes: @module_parser.parse_classes(gem_path),
           dependencies: @dependency_mapper.extract_dependencies(gem_path),
-          color: get_gem_color(gem_name)
+          color: get_gem_color(gem_name),
+          classHierarchy: @module_parser.extract_class_hierarchy(gem_path)
         }
         
-        # Add module details for ALL modules (or limit to top modules for performance)
+        # Add module details for ALL modules
         if gem_data[:modules].any?
           gem_data[:moduleDetails] = {}
-          # Process more modules but set a reasonable limit to avoid huge files
-          modules_to_process = gem_data[:modules].take(20) # Increased from 5 to 20
-          
-          modules_to_process.each do |module_name|
+
+          gem_data[:modules].each do |module_name|
             print "."
             details = @module_parser.get_module_details(gem_path, module_name)
             # Only include modules that have methods or important components
@@ -129,9 +128,23 @@ class RailsAnalyzer
             end
           end
         end
-        
+
+        # Add class details for ALL classes
+        if gem_data[:classes].any?
+          gem_data[:classDetails] = {}
+
+          gem_data[:classes].each do |class_name|
+            print "."
+            details = @module_parser.get_class_details(gem_path, class_name)
+            # Only include classes that have methods
+            if details[:methods].any? || details[:class_methods].any?
+              gem_data[:classDetails][class_name] = details
+            end
+          end
+        end
+
         gems << gem_data
-        puts " ✓ (#{gem_data[:loc]} LOC, #{gem_data[:modules].size} modules)"
+        puts " ✓ (#{gem_data[:loc]} LOC, #{gem_data[:modules].size} modules, #{gem_data[:classes].size} classes)"
       else
         puts "  ⚠️  #{gem_name} not found at #{gem_path}"
       end

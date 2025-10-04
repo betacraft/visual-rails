@@ -132,10 +132,138 @@ class ModuleParser
     
     details
   end
-  
+
+  def get_class_details(gem_path, class_name)
+    details = {
+      description: get_class_description(class_name),
+      superclass: nil,
+      included_modules: [],
+      methods: [],
+      class_methods: [],
+      loc: 0
+    }
+
+    # Find all files that might contain this class
+    class_files = find_all_class_files(gem_path, class_name)
+
+    class_files.each do |class_file|
+      next unless File.exist?(class_file)
+
+      content = File.read(class_file)
+
+      # Extract superclass
+      if content =~ /class\s+#{Regexp.escape(class_name.split('::').last)}\s*<\s*([A-Z][\w:]*)/
+        details[:superclass] = $1 unless details[:superclass]
+      end
+
+      # Extract methods similar to get_module_details
+      in_class = false
+      in_class_methods = false
+      current_indent = 0
+      private_section = false
+
+      content.lines.each do |line|
+        # Check if we're entering the target class
+        if line =~ /^\s*class\s+#{Regexp.escape(class_name.split('::').last)}/
+          in_class = true
+          current_indent = line[/^\s*/].length
+          private_section = false
+        elsif in_class && line =~ /^\s{#{current_indent}}end/
+          in_class = false
+          in_class_methods = false
+        elsif in_class
+          # Check for private/protected sections
+          if line =~ /^\s*(private|protected)\s*$/
+            private_section = true
+          elsif line =~ /^\s*public\s*$/
+            private_section = false
+          end
+
+          # Check for class << self block
+          if line =~ /^\s*class\s*<<\s*self/
+            in_class_methods = true
+          elsif in_class_methods && line =~ /^\s*end/
+            in_class_methods = false
+          end
+
+          # Find method definitions (skip private ones)
+          if !private_section && line =~ /^\s*def\s+(self\.)?([a-z_][a-z0-9_]*[!?=]?)/
+            is_class_method = $1 || in_class_methods
+            method_name = $2
+
+            unless method_name.start_with?('_')
+              if is_class_method
+                details[:class_methods] << method_name unless details[:class_methods].include?(method_name)
+              else
+                details[:methods] << method_name unless details[:methods].include?(method_name)
+              end
+            end
+          end
+
+          # Find included modules
+          if line =~ /^\s*include\s+([A-Z][A-Za-z0-9_:]*)/
+            module_name = $1
+            details[:included_modules] << module_name unless details[:included_modules].include?(module_name)
+          end
+
+          # Find extended modules
+          if line =~ /^\s*extend\s+([A-Z][A-Za-z0-9_:]*)/
+            module_name = $1
+            details[:included_modules] << module_name unless details[:included_modules].include?(module_name)
+          end
+
+          # Extract attr_accessor, attr_reader, attr_writer
+          if !private_section && line =~ /^\s*attr_(accessor|reader|writer)\s+:(\w+)/
+            method_name = $2
+            details[:methods] << method_name unless details[:methods].include?(method_name)
+            if $1 == 'accessor' || $1 == 'writer'
+              details[:methods] << "#{method_name}=" unless details[:methods].include?("#{method_name}=")
+            end
+          end
+
+          # Extract delegated methods
+          if !private_section && line =~ /^\s*delegate\s+:(\w+)/
+            method_name = $1
+            details[:methods] << method_name unless details[:methods].include?(method_name)
+          end
+        end
+      end
+
+      details[:loc] += content.lines.count
+    end
+
+    # Sort methods alphabetically
+    details[:methods] = details[:methods].sort.uniq
+    details[:class_methods] = details[:class_methods].sort.uniq
+    details[:included_modules] = details[:included_modules].uniq
+
+    details
+  end
+
+  def extract_class_hierarchy(gem_path)
+    hierarchy = {}
+
+    Dir.glob(File.join(gem_path, 'lib', '**', '*.rb')).each do |file|
+      begin
+        content = File.read(file)
+
+        # Match: class ClassName < ParentClass
+        content.scan(/^\s*class\s+([A-Z][\w:]*)\s*<\s*([A-Z][\w:]*)/) do |match|
+          child_class = normalize_module_name(match[0], gem_path)
+          parent_class = match[1]
+          hierarchy[child_class] = parent_class if valid_module?(child_class)
+        end
+      rescue => e
+        # Skip files that can't be read
+      end
+    end
+
+    hierarchy
+  end
+
   def count_methods(gem_path)
     method_count = 0
-    
+
     Dir.glob(File.join(gem_path, 'lib', '**', '*.rb')).each do |file|
       begin
         content = File.read(file)
@@ -144,7 +272,7 @@ class ModuleParser
         # Skip files that can't be read
       end
     end
-    
+
     method_count
   end
   
@@ -213,11 +341,11 @@ class ModuleParser
   
   def find_all_module_files(gem_path, module_name)
     files = []
-    
+
     # Try to find the main module file
     main_file = find_module_file(gem_path, module_name)
     files << main_file if main_file
-    
+
     # Also look for files in a directory named after the module
     module_parts = module_name.split('::')
     if module_parts.length > 1
@@ -225,16 +353,21 @@ class ModuleParser
       dir_path = module_parts.map { |p| p.gsub(/([A-Z])/, '_\1').downcase.sub(/^_/, '') }.join('/')
       pattern = File.join(gem_path, 'lib', dir_path, '**', '*.rb')
       files.concat(Dir.glob(pattern))
-      
+
       # Also check without the first part (e.g., just 'base' directory)
       if module_parts.length == 2
         last_part = module_parts.last.gsub(/([A-Z])/, '_\1').downcase.sub(/^_/, '')
         pattern = File.join(gem_path, 'lib', '**', last_part, '*.rb')
-        files.concat(Dir.glob(pattern).take(3)) # Limit to avoid too many files
+        files.concat(Dir.glob(pattern))
       end
     end
-    
-    files.uniq.take(5) # Limit total files to avoid processing too much
+
+    files.uniq
+  end
+
+  def find_all_class_files(gem_path, class_name)
+    # Reuse the same logic as modules since classes follow the same file structure
+    find_all_module_files(gem_path, class_name)
   end
   
   def extract_common_module_methods(gem_path, module_name, details)
@@ -328,5 +461,27 @@ class ModuleParser
     }
     
     descriptions[module_name] || "#{module_name.split('::').last} module"
+  end
+
+  def get_class_description(class_name)
+    # Reuse module descriptions where applicable
+    desc = get_module_description(class_name)
+    return desc unless desc.end_with?('module')
+
+    # Add class-specific descriptions
+    class_descriptions = {
+      'ActiveRecord::Base' => 'Base class for all ActiveRecord models',
+      'ActiveRecord::Migration' => 'Base class for database migrations',
+      'ActiveRecord::Relation' => 'Represents a database query',
+      'ActionController::Base' => 'Base class for all controllers',
+      'ActionController::API' => 'Base class for API-only controllers',
+      'ActionView::Base' => 'Base class for view rendering',
+      'ActionMailer::Base' => 'Base class for mailers',
+      'ActiveJob::Base' => 'Base class for background jobs',
+      'ActionCable::Channel::Base' => 'Base class for WebSocket channels',
+      'ActionCable::Connection::Base' => 'Base class for WebSocket connections'
+    }
+
+    class_descriptions[class_name] || "#{class_name.split('::').last} class"
   end
 end
