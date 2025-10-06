@@ -21,6 +21,10 @@ import {
   generateAPIJsonResponseD3Data,
   generateStreamingResponseD3Data
 } from './httpRequestFlowsD3';
+import {
+  generateBootFlowsD3Data,
+  generateBootProcessOverview
+} from './railsBootFlowsD3';
 import './GraphView.css';
 
 function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSupport, layoutType, showMetrics, focusedGem, focusedModule }) {
@@ -30,12 +34,12 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
   const [notesExpanded, setNotesExpanded] = useState(false);
   const [visibleSubFlows, setVisibleSubFlows] = useState(1); // For progressive reveal on page 1 of request-flow
   const [collapsedNodes, setCollapsedNodes] = useState(new Set()); // Track collapsed nodes in tree view
-  const totalPages = currentView === 'activerecord-flow' ? 6 : currentView === 'request-flow' ? 9 : 1;
+  const totalPages = currentView === 'activerecord-flow' ? 6 : currentView === 'request-flow' ? 9 : currentView === 'boot-process' ? 12 : 1;
   
-  // Page titles for activerecord-flow
+  // Page titles for flow views
   const pageTitles = currentView === 'activerecord-flow' ? {
     1: "Core Components Overview",
-    2: "Lazy Query Initialization", 
+    2: "Lazy Query Initialization",
     3: "Simple Query Execution",
     4: "Query with Joins",
     5: "Complex Query with Includes",
@@ -50,11 +54,24 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
     7: "Complex Multi-Model Request",
     8: "API JSON Response",
     9: "Streaming Response"
+  } : currentView === 'boot-process' ? {
+    1: "Initial Boot & Bundler Setup",
+    2: "Application Class Definition",
+    3: "Railtie Registration",
+    4: "Initialize! - Main Event",
+    5: "Bootstrap Initializers",
+    6: "Framework Initializers",
+    7: "Application Initializers",
+    8: "Middleware Stack Construction",
+    9: "Eager Loading (Production)",
+    10: "Finalization & Routes",
+    11: "Server Start & First Request",
+    12: "Complete Boot Timeline"
   } : {};
 
   // Handle keyboard navigation for flow pages
   useEffect(() => {
-    if (currentView !== 'activerecord-flow' && currentView !== 'request-flow') return;
+    if (currentView !== 'activerecord-flow' && currentView !== 'request-flow' && currentView !== 'boot-process') return;
 
     const handleKeyPress = (e) => {
       // Special handling for page 1 of request-flow (progressive reveal)
@@ -102,7 +119,7 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
 
   // Reset page when entering flow views
   useEffect(() => {
-    if (currentView === 'activerecord-flow' || currentView === 'request-flow') {
+    if (currentView === 'activerecord-flow' || currentView === 'request-flow' || currentView === 'boot-process') {
       setCurrentPage(1);
       if (currentView === 'request-flow') {
         setVisibleSubFlows(1); // Start with only first flow visible
@@ -266,18 +283,24 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
       nodes = flowData.nodes;
       links = flowData.links;
     } else if (currentView === 'boot-process') {
-      // Boot Process visualization
-      const flow = data.bootProcess;
-      nodes = flow.steps.map(step => ({
-        ...step,
-        x: width / 2,
-        y: 0
-      }));
-      
-      links = flow.connections.map(conn => ({
-        source: conn.from,
-        target: conn.to
-      }));
+      // Boot Process visualization with pages
+      const bootFlows = generateBootFlowsD3Data();
+      const flowData = bootFlows[currentPage - 1];
+
+      if (flowData) {
+        nodes = flowData.nodes;
+        links = flowData.links;
+
+        // Adjust height based on node count
+        const nodeSpacing = 80;
+        height = Math.max(container.clientHeight, nodeSpacing * (nodes.length + 2));
+        svg.attr('height', height);
+      } else {
+        // Fallback to overview
+        const overviewData = generateBootProcessOverview();
+        nodes = overviewData.nodes;
+        links = overviewData.links;
+      }
     } else if (focusedModule && focusedModule.parentGem) {
       // Show classes of the focused module
       const classDetails = focusedModule.parentGem.classDetails || {};
@@ -313,6 +336,36 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
         links.push({
           source: focusedModule.id,
           target: classNode.id,
+          strength: 2
+        });
+      });
+    } else if (focusedModule && focusedModule.details) {
+      // Show components of the focused module (fallback when no classes)
+      const components = focusedModule.details.components || [];
+      nodes = components.map((componentName, index) => ({
+        id: `component-${index}`,
+        name: componentName,
+        type: 'component',
+        parent: focusedModule.name,
+        color: '#9C27B0'
+      }));
+
+      // Add central node for the module itself
+      nodes.unshift({
+        id: focusedModule.id,
+        name: focusedModule.name,
+        type: 'module-center',
+        color: focusedModule.parentGem?.color || '#757575',
+        description: focusedModule.details?.description || '',
+        loc: focusedModule.details?.loc || 0
+      });
+
+      // Connect all components to the central module node
+      links = [];
+      components.forEach((_, index) => {
+        links.push({
+          source: focusedModule.id,
+          target: `component-${index}`,
           strength: 2
         });
       });
@@ -1089,13 +1142,18 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
         </>
       )}
       {currentView === 'boot-process' && (
-        <div className="gem-view-hint">
-          <strong>Rails Boot Process</strong>
-          <br />
-          <small>How Rails initializes and starts up</small>
-          <br />
-          <small>Press <kbd>ESC</kbd> or <kbd>1</kbd> to return to overview</small>
-        </div>
+        <>
+          <div className="gem-view-hint">
+            <strong>Rails Boot Process</strong>
+            <br />
+            <small>{pageTitles[currentPage]}</small>
+            <br />
+            <small>Press <kbd>ESC</kbd> to return to overview</small>
+          </div>
+          <div className="page-title">
+            <h2>{pageTitles[currentPage]}</h2>
+          </div>
+        </>
       )}
       {(focusedGem || focusedModule) && (
         <div className="gem-view-hint">
@@ -1117,9 +1175,9 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
         </div>
       )}
       
-      {(currentView === 'activerecord-flow' || currentView === 'request-flow') && (
+      {(currentView === 'activerecord-flow' || currentView === 'request-flow' || currentView === 'boot-process') && (
         <>
-          <PageNavigation 
+          <PageNavigation
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={(page) => {

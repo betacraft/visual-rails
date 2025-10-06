@@ -1,5 +1,6 @@
 import React from 'react';
 import { getHttpRequestFlowNotes } from './httpRequestFlowNotes';
+import { railsBootFlowNotes } from './railsBootFlowNotes';
 import './NotesPanel.css';
 
 const pageNotes = {
@@ -392,9 +393,48 @@ const pageNotes = {
 
 function NotesPanel({ currentPage, isExpanded, onToggle, viewType = 'activerecord-flow', visibleSubFlows = null }) {
   let notes;
-  
+
   if (viewType === 'request-flow') {
     notes = getHttpRequestFlowNotes(currentPage, visibleSubFlows);
+  } else if (viewType === 'boot-process') {
+    // Map page numbers to boot flow IDs
+    const bootFlowIds = [
+      'initial-boot',
+      'app-definition',
+      'railtie-registration',
+      'initialize',
+      'bootstrap',
+      'framework',
+      'app-initializers',
+      'middleware',
+      'eager-loading',
+      'finalization',
+      'server-start',
+      'boot-timeline'
+    ];
+    const flowId = bootFlowIds[currentPage - 1];
+    const bootNotes = railsBootFlowNotes[flowId];
+
+    if (bootNotes) {
+      // Format boot notes for display
+      notes = {
+        title: bootNotes.title,
+        content: `
+**${bootNotes.overview}**
+
+${bootNotes.keyPoints.map(point => `• ${point}`).join('\n')}
+
+**Timing:** ${bootNotes.timing}
+
+**Next Step:** ${bootNotes.nextStep}
+
+**Code References:**
+${bootNotes.codeReferences.map(ref => `• ${ref.file} (${ref.lines}): ${ref.description}`).join('\n')}
+        `
+      };
+    } else {
+      notes = { title: "Notes", content: "No notes available for this page." };
+    }
   } else {
     notes = pageNotes[currentPage] || { title: "Notes", content: "No notes available for this page." };
   }
