@@ -11,6 +11,13 @@ function Sidebar({ currentView, onNavigate, collapsed, onToggleCollapse }) {
       action: 'overview'
     },
     {
+      id: 'collapsible-tree',
+      label: 'Collapsible Tree',
+      description: 'Full Hierarchy',
+      icon: '🌳',
+      action: 'collapsible-tree'
+    },
+    {
       id: 'database-flow',
       label: 'Database Query Flow',
       description: 'ActiveRecord',

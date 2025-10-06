@@ -4,6 +4,7 @@ import MermaidView from './components/MermaidView';
 import InfoPanel from './components/InfoPanel';
 import Breadcrumb from './components/Breadcrumb';
 import Sidebar from './components/Sidebar';
+import CollapsibleTree from './components/CollapsibleTree';
 import railsData from '../data/rails_structure_real.json';
 import './App.css';
 
@@ -51,6 +52,9 @@ function App() {
       case 'overview':
         showOverview();
         break;
+      case 'collapsible-tree':
+        showCollapsibleTree();
+        break;
       case 'activerecord-flow':
         showActiveRecord();
         break;
@@ -64,7 +68,7 @@ function App() {
   };
 
   const handleBackNavigation = () => {
-    if (currentView === 'request-flow' || currentView === 'activerecord-flow' || currentView === 'boot-process') {
+    if (currentView === 'request-flow' || currentView === 'activerecord-flow' || currentView === 'boot-process' || currentView === 'collapsible-tree') {
       // Go back from flow views to overview
       showOverview();
     } else if (focusedModule) {
@@ -114,6 +118,14 @@ function App() {
     setFocusedGem(null);
     setFocusedModule(null);
     setNavigationPath(['Visual Rails', 'Boot Process']);
+  };
+
+  const showCollapsibleTree = () => {
+    setCurrentView('collapsible-tree');
+    setSelectedNode(null);
+    setFocusedGem(null);
+    setFocusedModule(null);
+    setNavigationPath(['Visual Rails', 'Collapsible Tree']);
   };
 
   const toggleFullscreen = () => {
@@ -218,27 +230,33 @@ function App() {
   return (
     <div className={`app ${presentationMode ? 'presentation-mode' : ''} ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {!presentationMode && (
-        <Sidebar 
+        <Sidebar
           currentView={currentView}
           onNavigate={handleSidebarNavigate}
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
       )}
-      {!presentationMode && (
+
+      {/* Collapsible Tree View - Full page, no controls */}
+      {currentView === 'collapsible-tree' ? (
+        <CollapsibleTree data={railsData} />
+      ) : (
         <>
-          <header className="app-header">
-            <div className="header-content">
-              <h1>Visual Rails</h1>
-            </div>
-            <Breadcrumb 
-              path={navigationPath} 
-              onNavigate={handleNavigate}
-              onBack={handleBackNavigation}
-            />
-          </header>
-          
-          <div className="controls-bar">
+          {!presentationMode && (
+            <>
+              <header className="app-header">
+                <div className="header-content">
+                  <h1>Visual Rails</h1>
+                </div>
+                <Breadcrumb
+                  path={navigationPath}
+                  onNavigate={handleNavigate}
+                  onBack={handleBackNavigation}
+                />
+              </header>
+
+              <div className="controls-bar">
             <div className="control-group">
               <label className="control-label">Style:</label>
               <div className="style-buttons">
@@ -364,17 +382,19 @@ function App() {
         )}
       </main>
 
-      {!presentationMode && (
-        <footer className="app-footer">
-          <div className="keyboard-hints">
-            <span>Click to select</span>
-            <span>Click again to drill down</span>
-            <span>|</span>
-            <span>F: Fullscreen</span>
-            <span>P: Presentation</span>
-            <span>ESC: Back</span>
-          </div>
-        </footer>
+          {!presentationMode && (
+            <footer className="app-footer">
+              <div className="keyboard-hints">
+                <span>Click to select</span>
+                <span>Click again to drill down</span>
+                <span>|</span>
+                <span>F: Fullscreen</span>
+                <span>P: Presentation</span>
+                <span>ESC: Back</span>
+              </div>
+            </footer>
+          )}
+        </>
       )}
     </div>
   );

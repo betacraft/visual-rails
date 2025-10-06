@@ -1,0 +1,207 @@
+/* Collapsible Tree Visualization - Minimal Styling */
+
+.collapsible-tree-container {
+  width: 100%;
+  height: 100vh;
+  background: #ffffff;
+  overflow: auto;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.tree-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 1rem;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tree-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.tree-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.tree-stats {
+  font-size: 0.875rem;
+  color: #666;
+  font-family: monospace;
+}
+
+.toggle-empty-button {
+  padding: 0.5rem 1rem;
+  background: #f5f5f5;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  color: #333;
+}
+
+.toggle-empty-button:hover {
+  background: #e8e8e8;
+  border-color: #999;
+}
+
+.toggle-empty-button.active {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.tree-svg-wrapper {
+  padding: 2rem;
+  overflow: visible;
+}
+
+.tree-svg {
+  font: 12px sans-serif;
+  user-select: none;
+}
+
+/* Node styles */
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  stroke-width: 2px;
+  transition: all 0.2s;
+}
+
+.node.node-gem circle {
+  fill: #CC0000;
+  stroke: #CC0000;
+  r: 5;
+}
+
+.node.node-module circle {
+  fill: #2196F3;
+  stroke: #2196F3;
+  r: 4;
+}
+
+.node.node-class circle {
+  fill: #9C27B0;
+  stroke: #9C27B0;
+  r: 4;
+}
+
+.node.node-method circle,
+.node.node-class_method circle {
+  fill: #999;
+  stroke: #999;
+  r: 3;
+}
+
+.node.node-leaf circle {
+  fill: #fff;
+}
+
+.node:hover circle {
+  stroke-width: 3px;
+}
+
+/* Text labels */
+.node text {
+  font: 12px monospace;
+  fill: #333;
+}
+
+.node.node-gem text {
+  font-weight: bold;
+  font-size: 14px;
+  fill: #CC0000;
+}
+
+.node.node-module text {
+  font-weight: 500;
+  fill: #2196F3;
+}
+
+.node.node-class text {
+  font-style: italic;
+  fill: #9C27B0;
+}
+
+.node.node-method text,
+.node.node-class_method text {
+  font-size: 11px;
+  fill: #666;
+}
+
+/* Links between nodes */
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+  stroke-opacity: 0.6;
+}
+
+/* Loading state */
+.tree-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.25rem;
+  color: #666;
+}
+
+/* Info tooltip */
+.tree-info {
+  position: absolute;
+  top: 5rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  max-width: 250px;
+  line-height: 1.5;
+  pointer-events: none;
+}
+
+.tree-info kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 0.7rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tree-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .tree-svg-wrapper {
+    padding: 1rem;
+  }
+
+  .tree-info {
+    display: none;
+  }
+}
