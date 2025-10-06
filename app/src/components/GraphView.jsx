@@ -278,33 +278,41 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
         source: conn.from,
         target: conn.to
       }));
-    } else if (focusedModule && focusedModule.details) {
-      // Show components of the focused module
-      const components = focusedModule.details.components || [];
-      nodes = components.map((componentName, index) => ({
-        id: `component-${index}`,
-        name: componentName,
-        type: 'component',
-        parent: focusedModule.name,
-        color: '#9C27B0'
-      }));
-      
+    } else if (focusedModule && focusedModule.parentGem) {
+      // Show classes of the focused module
+      const classDetails = focusedModule.parentGem.classDetails || {};
+      const moduleName = focusedModule.name;
+
+      // Filter classes that belong to this module (prefix matching)
+      const moduleClasses = Object.entries(classDetails)
+        .filter(([className]) => className.startsWith(moduleName))
+        .map(([className, details], index) => ({
+          id: `class-${index}`,
+          name: className,
+          type: 'class',
+          parent: moduleName,
+          color: '#7B1FA2',  // Purple for classes
+          ...details
+        }));
+
+      nodes = moduleClasses;
+
       // Add central node for the module itself
       nodes.unshift({
         id: focusedModule.id,
         name: focusedModule.name,
         type: 'module-center',
         color: focusedModule.parentGem.color || '#757575',
-        description: focusedModule.details.description,
-        loc: focusedModule.details.loc
+        description: focusedModule.details?.description || '',
+        loc: focusedModule.details?.loc || 0
       });
-      
-      // Connect all components to the central module node
+
+      // Connect all classes to the central module node
       links = [];
-      components.forEach((_, index) => {
+      moduleClasses.forEach((classNode) => {
         links.push({
           source: focusedModule.id,
-          target: `component-${index}`,
+          target: classNode.id,
           strength: 2
         });
       });
@@ -476,6 +484,20 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
           .attr("stroke", "#fff")
           .attr("stroke-width", 2)
           .attr("class", "node-shape component-node");
+      } else if (d.type === 'class') {
+        // Render classes as medium-sized rounded rectangles
+        const classNameShort = d.name.split('::').pop(); // Get last part of class name
+        const nodeWidth = classNameShort.length > 15 ? 120 : 100;
+        selection.append("rect")
+          .attr("x", -nodeWidth/2)
+          .attr("y", -22)
+          .attr("width", nodeWidth)
+          .attr("height", 44)
+          .attr("rx", 8)
+          .attr("fill", d.color || "#7B1FA2")
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 2)
+          .attr("class", "node-shape class-node");
       } else if (d.type === 'module-center') {
         // Central module node in component view
         selection.append("rect")
@@ -599,6 +621,13 @@ function GraphView({ data, currentView, onNodeClick, selectedNode, hideActiveSup
           .attr("dy", ".35em")
           .style("font-size", d.name.length > 12 ? "9px" : "10px")
           .style("font-weight", "500");
+      } else if (d.type === 'class') {
+        // Class names - show only the last part (e.g., "Base" from "ActionCable::Base")
+        const classNameShort = d.name.split('::').pop();
+        textElement.text(classNameShort)
+          .attr("dy", ".35em")
+          .style("font-size", classNameShort.length > 15 ? "10px" : "11px")
+          .style("font-weight", "600");
       } else if (d.type === 'module-center') {
         // Module center name
         const moduleName = d.name.replace('::', '\n');

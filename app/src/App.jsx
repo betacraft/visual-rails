@@ -129,10 +129,10 @@ function App() {
       setSelectedNode(null);
       return;
     }
-    
-    // Check if we're in module view (viewing components)
+
+    // Check if we're in module view (viewing classes)
     if (focusedModule) {
-      // In component view, just select the component
+      // In class view, just select the class (methods shown in sidebar)
       setSelectedNode(node);
       return;
     }
@@ -142,9 +142,15 @@ function App() {
       // Clicking on a module
       if (node.type === 'module') {
         if (selectedNode && selectedNode.id === node.id) {
-          // Second click - drill down into the module
+          // Second click - check if module has classes before drilling down
+          const classDetails = focusedGem.classDetails || {};
+          const moduleClasses = Object.keys(classDetails)
+            .filter(className => className.startsWith(node.name));
+
           const moduleDetails = focusedGem.moduleDetails && focusedGem.moduleDetails[node.name];
-          if (moduleDetails) {
+
+          if (moduleClasses.length > 0 && moduleDetails) {
+            // Has classes - drill down to show class nodes
             setFocusedModule({
               ...node,
               details: moduleDetails,
@@ -152,10 +158,21 @@ function App() {
             });
             setNavigationPath(['Visual Rails', focusedGem.name, node.name]);
             setSelectedNode(null);
+          } else {
+            // No classes - keep module selected, InfoPanel will show module's methods
+            // Attach moduleDetails to the node for InfoPanel to use
+            setSelectedNode({
+              ...node,
+              moduleDetails: moduleDetails
+            });
           }
         } else {
           // First click - select the module
-          setSelectedNode(node);
+          const moduleDetails = focusedGem.moduleDetails && focusedGem.moduleDetails[node.name];
+          setSelectedNode({
+            ...node,
+            moduleDetails: moduleDetails
+          });
         }
       }
       return;

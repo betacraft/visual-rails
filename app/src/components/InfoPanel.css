@@ -170,3 +170,123 @@
   color: #333;
   border-color: #ccc;
 }
+
+/* Class-specific styles */
+.badge-class {
+  background: #7B1FA2;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Module-specific styles */
+.badge-module {
+  background: #1976D2;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.inheritance-info {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #f9f9f9;
+  border-radius: 4px;
+  border-left: 3px solid #7B1FA2;
+}
+
+.superclass-label {
+  color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.superclass-name {
+  color: #7B1FA2;
+  font-weight: 600;
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.method-search {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+  font-family: monospace;
+}
+
+.method-search:focus {
+  outline: none;
+  border-color: #7B1FA2;
+}
+
+.method-section {
+  margin-top: 1rem;
+}
+
+.method-section h4 {
+  color: #7B1FA2;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.method-list {
+  max-height: 300px;
+  overflow-y: auto;
+  background: #fafafa;
+  border-radius: 6px;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+}
+
+.method-item {
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.25rem;
+  background: white;
+  border-radius: 4px;
+  border-left: 3px solid #7B1FA2;
+  transition: all 0.2s;
+  cursor: default;
+}
+
+.method-item:hover {
+  background: #f3e5f5;
+  transform: translateX(2px);
+}
+
+.method-item code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Scrollbar styling for method list */
+.method-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.method-list::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.method-list::-webkit-scrollbar-thumb {
+  background: #7B1FA2;
+  border-radius: 4px;
+}
+
+.method-list::-webkit-scrollbar-thumb:hover {
+  background: #6A1B9A;
+}
