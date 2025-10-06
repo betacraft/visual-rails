@@ -256,7 +256,7 @@ function CollapsibleTree({ data }) {
             onClick={handleToggleEmpty}
             title="Hide modules and classes without public methods"
           >
-            {hideEmpty ? '✓ Hiding Empty' : 'Show All'}
+            {hideEmpty ? 'Show All' : 'Hide Empty'}
           </button>
         </div>
       </div>
